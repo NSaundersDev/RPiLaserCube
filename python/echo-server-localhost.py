@@ -1,9 +1,9 @@
 from socket import *
 import os
 
-host = "192.168.1.18"
+host = "127.0.0.1"
 
-port = 8080
+port = 5432
 
 s = socket(AF_INET, SOCK_STREAM)
 
