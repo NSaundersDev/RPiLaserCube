@@ -1,10 +1,10 @@
 from socket import *
 
-host = "127.0.0.1"
+host = "192.168.1.7"
 
 print(host)
 
-port=5432
+port=8080
 
 s=socket(AF_INET, SOCK_STREAM)
 
