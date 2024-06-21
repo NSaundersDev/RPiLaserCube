@@ -3,7 +3,7 @@ import os
 
 host = "127.0.0.1"
 
-port = 5432
+port = 8080
 
 s = socket(AF_INET, SOCK_STREAM)
 
