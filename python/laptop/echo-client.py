@@ -1,6 +1,6 @@
 from socket import *
 
-host = "192.168.1.7"
+host = "192.168.1.8"
 
 print(host)
 
