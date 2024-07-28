@@ -11,7 +11,7 @@ const ws_server = new WebSocket.Server({ server });
 
 let recordState = 0;
 let sampleRate = 1000; // default one sample per second
-
+let interval = null;
 ws_server.on('connection', function connection(ws) {
   ws.on('connection', function connection(ws) {
     ws.isAlive = true;
@@ -20,8 +20,11 @@ ws_server.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
     let strings = message.toString().split(",");
     console.log(strings);
-    if(strings[0] == 'go'){
-      let interval = setInterval(() => {
+    if(strings[0] == 'go') {
+      if(interval != null) {
+        clearInterval(interval);
+      }
+      interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
           exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
           if (error) {
@@ -37,6 +40,7 @@ ws_server.on('connection', function connection(ws) {
       // console.log('received msg!');
       console.log("command: " + message.toString());
     }
+    
     processCommand(strings[0]);
   });
 
@@ -52,13 +56,13 @@ function processCommand(command) {
       return;
     case "R~":
       // stop recording
-      recordState = 1;
-      console.log("processing start recording command");
+      recordState = 0;
+      console.log("processing stop recording command");
       return;
     case "X":
-      recordState = 0;
+      recordState = 1;
       // start recording
-      console.log("processing stop recording command");
+      console.log("processing start recording command");
       return;
     case "stop":
       recordState = 0;
