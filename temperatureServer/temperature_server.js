@@ -8,30 +8,41 @@ const port = 8080;
 const server = http.createServer(app);
 
 const ws_server = new WebSocket.Server({ server });
+
 let recordState = 0;
+let sampleRate = 1000; // default one sample per second
+
 ws_server.on('connection', function connection(ws) {
+  ws.on('connection', function connection(ws) {
+    ws.isAlive = true;
+  });
+
   ws.on('message', function incoming(message) {
+    let strings = message.toString().split(",");
+    console.log(strings);
+    if(strings[0] == 'go'){
+      let interval = setInterval(() => {
+        ws_server.clients.forEach((client) => {
+          exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
+          if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+          console.log(`${stdout}`);
+          ws.send(JSON.stringify(stdout));
+        });
+      });}, sampleRate);
+
       // on msg, respond with a timestamp and the thermocouple data
       // console.log('received msg!');
       console.log("command: " + message.toString());
-      let strings = message.toString().split(",");
-      console.log(strings);
-      processCommand(strings[0]);
+    }
+    processCommand(strings[0]);
   });
-  
-  setInterval(() => {
-    ws_server.clients.forEach((client) => {
-    exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        return;
-      }
-    console.log(`${stdout}`);
-    ws.send(JSON.stringify(stdout));
-});
-    });
-  }, 1000);
 
+  ws.on('close', function close() {
+    clearInterval(interval);
+  });
 });
 
 function processCommand(command) {
@@ -41,13 +52,13 @@ function processCommand(command) {
       return;
     case "R~":
       // stop recording
-      recordState = 0;
-      console.log("processing record command");
+      recordState = 1;
+      console.log("processing start recording command");
       return;
     case "X":
-      recordState = 1;
+      recordState = 0;
       // start recording
-      console.log("processing start command");
+      console.log("processing stop recording command");
       return;
     case "stop":
       recordState = 0;
@@ -59,20 +70,9 @@ function processCommand(command) {
   }
 }
 
-
 server.listen(port, function(err) {
     if (err) {
         throw err;
     }
     console.log(`listening on port ${port}!`);
 });
-
-
-function getTemperatureData() {
-  const childProcess = require('child_process').spawn('./read_all_temperatures.sh');
-
-	  // Pipe the stdout of the child process to the WebSocket connection
-  childProcess.stdout.on('data', (data) => {
-    WebSocket.send(data);
-  });
-}
