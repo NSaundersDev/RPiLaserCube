@@ -1,20 +1,25 @@
+import sm_tc
 from socket import *
 import os
 
-host = "192.168.1.9"
-
-port = 8080
-
+host = "0.0.0.0"
+port = 8081
 s = socket(AF_INET, SOCK_STREAM)
-
 s.bind((host,port))
 
-s.listen(5)
+while True == True:
+	s.listen(5)
 
-print("Listening for connections...")
+	q,addr = s.accept()
 
-q,addr = s.accept()
+	t = sm_tc.SMtc(0)
+	
+	temp = t.get_temp(1)
+	
+	sendData = "Temp: " + str(temp)
+	encodedData = sendData.encode()
+	q.send(encodedData)  
 
-data = input("Enter data to be sent: ")
-encodedData = data.encode();
-q.send(encodedData)  
+s.close()
+print("Loop ended")
+
