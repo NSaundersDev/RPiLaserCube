@@ -1,0 +1,23 @@
+body {
+  font-family: Sans-serif;
+  box-sizing: border-box;
+  margin: 5px;
+}
+
+header {
+  display: flex;
+  background: linear-gradient(to left, white, #5093C2);
+  margin: 0px 0px 5px 0px;
+  border-radius: 5px;
+  justify-content: flex-start;
+  flex-flow: row nowrap;
+  height: 50px;
+}
+
+img {
+  height: 50px;
+}
+
+#message {
+  margin: auto auto auto 5px;
+}

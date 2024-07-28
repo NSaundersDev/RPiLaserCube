@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">  
+  <link rel="stylesheet" type="text/css" src="dygraph.css" />
+  <link rel="stylesheet" type="text/css" href="G77.css">
+  <title>Endlas G77</title>
+  <script type="text/javascript" src="dygraph.min.js"></script>
+  <script type="text/javascript" src="G77.js"></script>  
+</head>
+
+<body onload="startup();">
+
+  <body>
+    <header>
+      <div class="logos">
+        <a href="http://endlas.com/"><img src="img/endlasLogo.png" alt="Endlas Additive"></a>
+      </div>
+      <div class="AllDataContainer">
+ <div class="panel" id="thermo1Panel">
+          <h4>Temp 1</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo1Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+        <div class="panel" id="thermo2Panel">
+          <h4>Temp 2</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo2Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+        <div class="panel dropdown" id="thermo3Panel">
+          <h4>Temp 3</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo3Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+
+        <div class="panel dropdown" id="thermo4Panel">
+          <h4>Temp 4</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo4Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+
+        <div class="panel dropdown" id="thermo5Panel">
+          <h4>Temp 5</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo5Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+
+        <div class="panel dropdown" id="thermo6Panel">
+          <h4>Temp 6</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo6Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+
+        <div class="panel dropdown" id="thermo7Panel">
+          <h4>Temp 7</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo7Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+
+        <div class="panel dropdown" id="thermo8Panel">
+          <h4>Temp 8</h4>
+          <div class="outputData">
+            <span class="outputDataValue" id="thermo8Value"></span>
+            <span class="outputDataUnits">°C</span>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div class="controlBar">
+      <img src="img/NCIlogo.png" alt="NCI NanoCoatings Inc." style="max-height: 100%;">
+      <input type="text" id="csvFileName" onmouseover="writeMessage('Base File Name- Date and extension will be added.')" onmouseout="writeMessage('')">
+      <input id="recordStopBtnElem" class="controlBtn" type="image" src="img/RecordNormal.png" onclick="recordStop();" onmouseover="this.src='img/RecordPressed.png'; writeMessage('START Recording Data to Base File Name');" onmouseout="this.src='img/RecordNormal.png'; writeMessage('');"/>
+      <input id="pauseBtnElem" class="controlBtn" type="image" src="img/PauseNormal.png" onclick="pause();" onmouseover="this.src='img/PausePressed.png'; writeMessage('PAUSE Measurements')" onmouseout="this.src='img/PauseNormal.png'; writeMessage('')" />
+      <a href="http://192.168.1.9/data/" id="downloadBtnElem" class="controlBtn"><img src="img/downloadNormal.png" onmouseover="this.src='img/downloadPressed2.png'; writeMessage('Download a Data Set')" onmouseout="this.src='img/downloadNormal.png'; writeMessage('')"alt="Download a dataSet"></a>
+      <div id="message"></div>
+      <div id="settingsElem" class="settingsDropdown">
+        <img src="img/settingsIcon.png" alt="Settings">
+        <div class="settings-content">
+          <input type="text" id="sampleRate" value="250" onmouseover="writeMessage('Sample Rate (ms)')" onmouseout="writeMessage('')">
+          <button type="button" onclick="sampleRate();" onmouseover="writeMessage('Click to set Sample Rate (ms)')" onmouseout="writeMessage('')">Set SampleRate</button>
+          <br>
+          <input id="revUnitsSelect" checked="false" type="checkbox" onmouseover="writeMessage('Output Distance Units in revolutions')" onmouseout="writeMessage('')">
+          <label for="revUnitsSelect" onmouseover="writeMessage('Output Distance Units in revolutions')" onmouseout="writeMessage('')">Rev Distance </label>
+        </div>
+      </div>
+    </div>
+    <div id="chartDiv" class="chartcontainer"></div>
+    <div class="graphControlBar">
+      <div id="chartControlLabel">
+        Chart Control:
+      </div>
+      <div class="graphControls">
+        <input id="plotTemp1" checked onclick="changeVisibility(this,0)" type="checkbox">
+        <label for="plotTemp1">Temp 1</label>
+      </div>
+
+      <div class="graphControls">
+        <input id="plotTemp2" checked onclick="changeVisibility(this,1)" type="checkbox">
+        <label for="plotTemp2">Temp 2</label>
+      </div>
+
+      <div class="graphControls">
+        <input id="plotTemp3" checked onclick="changeVisibility(this,2)" type="checkbox">
+        <label for="plotTemp3">Temp 3</label>
+      </div>
+      <div class="graphControls">
+        <input id="plotTemp4" checked onclick="changeVisibility(this,3)" type="checkbox">
+        <label for="plotTemp4">Temp 4</label>
+      </div>
+
+      <div class="graphControls">
+        <input id="plotTemp5" checked onclick="changeVisibility(this,4)" type="checkbox">
+        <label for="plotTemp5">Temp 5</label>
+      </div>
+      <div class="graphControls">
+        <input id="plotTemp6" checked onclick="changeVisibility(this,5)" type="checkbox">
+        <label for="plotTemp6">Temp 6</label>
+      </div>
+
+      <div class="graphControls">
+        <input id="plotTemp7" checked onclick="changeVisibility(this,6)" type="checkbox">
+        <label for="plotTemp7">Temp 7</label>
+      </div>
+
+      <div class="graphControls">
+        <input id="plotTemp8" checked onclick="changeVisibility(this,7)" type="checkbox">
+        <label for="plotTemp8">Temp 8</label>
+      </div>
+
+      <span id="chartInstructions"> Disable "Live Plot" to explore Data. Double-clicking zooms all the way out. Click and drag to zoom. Shift-drag will pan.</span>
+
+      <div class="graphControls">
+        <input id="dynamicPlot" checked="true" type="checkbox" onmouseover="writeMessage('Keep up with the Latest Data')" onmouseout="writeMessage('')">
+        <label for="dynamicPlot" onmouseover="writeMessage('Keep up with the Latest Data')" onmouseout="writeMessage('')">Live Plot </label>
+        <input type="text" id="historySize" value="600" onmouseover="writeMessage('Max Number of Latest samples to Plot')" onmouseout="writeMessage('')">
+        <label for="historySize" onmouseover="writeMessage('Max Number of Latest samples to Plot')" onmouseout="writeMessage('')">Samples on graph</label>
+      </div>
+      <input id="resetChartDataBtn" class="controlBtn" type="image" src="img/cleanup.png" onclick="clearDatasets();" onmouseover="writeMessage('Clear Chart Data')" onmouseout="writeMessage('')" />
+    </div>
+<body>
+</html>
+<script type="text/javascript" src="dygraph.min.js"></script>
+<script type="text/javascript" src="G77.js"></script>  

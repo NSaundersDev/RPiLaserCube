@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "dygraphs": "^2.2.1",
+    "express": "^4.19.2",
+    "node-cmd": "^5.0.0",
+    "react": "^18.3.1",
+    "require": "^0.4.4",
+    "shelljs": "^0.8.5",
+    "socket.io": "^4.7.5",
+    "system-commands": "^1.1.7",
+    "websocket": "^1.0.35",
+    "ws": "^8.18.0"
+  },
+  "name": "html",
+  "version": "1.0.0",
+  "main": "G77.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
