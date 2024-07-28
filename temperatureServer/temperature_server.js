@@ -8,15 +8,17 @@ const port = 8080;
 const server = http.createServer(app);
 
 const ws_server = new WebSocket.Server({ server });
-
+let recordState = 0;
 ws_server.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) {
       // on msg, respond with a timestamp and the thermocouple data
       // console.log('received msg!');
       console.log("command: " + message.toString());
-      processCommand(message);
+      let strings = message.toString().split(",");
+      console.log(strings);
+      processCommand(strings[0]);
   });
-  let out = "";
+  
   setInterval(() => {
     ws_server.clients.forEach((client) => {
     exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
@@ -28,7 +30,7 @@ ws_server.on('connection', function connection(ws) {
     ws.send(JSON.stringify(stdout));
 });
     });
-  }, 500);
+  }, 1000);
 
 });
 
@@ -36,15 +38,24 @@ function processCommand(command) {
   switch(command.toString()){
     case "go":
       console.log("processing go command");
-      break;
-    case "~R":
+      return;
+    case "R~":
+      // stop recording
+      recordState = 0;
       console.log("processing record command");
-      break;
+      return;
+    case "X":
+      recordState = 1;
+      // start recording
+      console.log("processing start command");
+      return;
     case "stop":
+      recordState = 0;
       console.log("processing stop command");
-      break;
+      return;
     default:
       console.log("command not recognized: " + command.toString());
+      return;
   }
 }
 
