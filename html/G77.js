@@ -1,4 +1,3 @@
-
 var Socket
 //var graphDataSet = [[1,2,3,4],[1,2,3,4],[10,12,13,14]]
 var graphDataSet = []
@@ -21,7 +20,8 @@ function openWebSocket() {
     startPlots()
   }
   Socket.onmessage = function(evt) {
-    console.log(evt.data);    
+    console.log("event data:")
+    console.log(evt.data);
     processIncomingData(evt.data)
   }
   Socket.onerror = function() {
@@ -46,13 +46,8 @@ function closeSocket() {
 }
 
 function processIncomingData(data) {
+  console.log(data.toString());
   dataStrings = data.split(",")
-  var recordState = parseInt(dataStrings[0]);
-  console.log("record state: " + recordState);
-  if (recordState != recording) {
-    changeRecordButton(recordState)
-  }
-  recording = recordState
   let datetime = new Date()
   graphDataSet.push([datetime, parseFloat(dataStrings[1]), parseFloat(dataStrings[2]), parseFloat(dataStrings[3]), parseFloat(dataStrings[4]), parseFloat(dataStrings[5]), parseFloat(dataStrings[6]), parseFloat(dataStrings[7]), parseFloat(dataStrings[8])])
   if (document.getElementById('dynamicPlot').checked == true) {
@@ -90,8 +85,9 @@ function calibrate(weight) {
 function pause() {
   pausebtn = document.getElementById('pauseBtnElem')
   if (paused) {
+    console.log("paused: " + paused.toString());
     paused = false
-    Socket.send("go\n")
+    Socket.send("go")
     pausebtn.src = 'img/PauseNormal.png'
     pausebtn.onmouseover = function() {
       this.src = 'img/PausePressed.png'
@@ -103,8 +99,9 @@ function pause() {
 
     }
   } else {
+    console.log("paused: " + paused.toString());
     paused = true
-    Socket.send("stop\n")
+    Socket.send("stop")
     pausebtn.src = 'img/PausePressed.png'
     pausebtn.onmouseover = function() {
       this.src = 'img/PauseNormal.png'
@@ -118,14 +115,25 @@ function pause() {
 }
 
 function recordStop() {
+  writeMessage("into record stop");
+  if(recording == null) {
+    recording = 0;
+  }
+  changeRecordButton(recording);
   if (recording) {
-    Socket.send("X")
-  } else {
-    Socket.send("R~" + document.getElementById('csvFileName').value + ".csv")
+    writeMessage("sending X");
+    Socket.send("X"); // stop
+    recording = !recording;
+  }
+  else {
+    writeMessage("sending R~");
+    Socket.send("R~, " + document.getElementById('csvFileName').value + ".csv") // start with file name
+    recording = !recording;
   }
 }
 
 function changeRecordButton(recordState) {
+  writeMessage("into change record button");
   recordbtn = document.getElementById('recordStopBtnElem')
   if (!recordState) { // Runs to stop recording
     recordbtn.src = 'img/RecordNormal.png'
