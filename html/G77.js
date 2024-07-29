@@ -116,25 +116,22 @@ function pause() {
 }
 
 function recordStop() {
-  writeMessage("into record stop");
-  if(recording == null) {
-    recording = 0;
-  }
-  changeRecordButton(recording);
+  writeMessage("into record stop: " + recording.toString());
   if (recording) {
     writeMessage("sending X");
     Socket.send("X"); // stop
     recording = !recording;
+    updateRecordButton(recording);
   }
   else {
     writeMessage("sending R~");
     Socket.send("R~," + document.getElementById('csvFileName').value + ".csv") // start with file name
     recording = !recording;
+    updateRecordButton(recording);
   }
 }
 
-function changeRecordButton(recordState) {
-  writeMessage("into change record button");
+function updateRecordButton(recordState) {
   recordbtn = document.getElementById('recordStopBtnElem')
   if (!recordState) { // Runs to stop recording
     recordbtn.src = 'img/RecordNormal.png'
