@@ -231,7 +231,7 @@ function sampleRate() {
     document.getElementById('sampleRate').value = 250
     sampleRate = 250
   }
-  Socket.send("d" + sampleRate + '\n')
+  Socket.send("d," + sampleRate)
 }
 
 function updatePlots() {

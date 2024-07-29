@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const ws_server = new WebSocket.Server({ server });
 
 let recordState = 0;
-let sampleRate = 1000; // default one sample per second
+let sampleInterval = 1000; // default one sample per second
 let interval = null;
 
 ws_server.on('connection', function connection(ws) {
@@ -42,6 +42,7 @@ function processCommand(commands, ws) {
 
   switch(command){
     case "go":
+       sampleInterval = 1000;
        interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
           exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
@@ -52,7 +53,7 @@ function processCommand(commands, ws) {
           console.log(`${stdout}`);
           ws.send(JSON.stringify(stdout));
         });
-      });}, sampleRate);
+      });}, sampleInterval);
       console.log("processing go command");
       return;
     case "R~":
@@ -68,7 +69,7 @@ function processCommand(commands, ws) {
           console.log(`${stdout}`);
           ws.send(JSON.stringify(stdout));
         });
-      });}, sampleRate);
+      });}, sampleInterval);
       console.log("processing start recording command");
       return;
     case "X":
@@ -84,7 +85,7 @@ function processCommand(commands, ws) {
           console.log(`${stdout}`);
           ws.send(JSON.stringify(stdout));
         });
-      });}, sampleRate);
+      });}, sampleInterval);
       console.log("processing stop recording command");
       return;
     case "stop":
@@ -98,10 +99,27 @@ function processCommand(commands, ws) {
           console.log(`${stdout}`);
           ws.send(JSON.stringify(stdout));
         });
-      });}, sampleRate);
+      });}, sampleInterval);
       recordState = 0;
       console.log("processing stop command");
       return;
+
+    case "d":
+      let val = parseFloat(commands[1]);
+      console.log(val);
+      sampleInterval = parseFloat(commands[1]);
+      interval = setInterval(() => {
+        ws_server.clients.forEach((client) => {
+          exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
+          if (error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+          console.log(`${stdout}`);
+          ws.send(JSON.stringify(stdout));
+        });
+      });}, sampleInterval);
+      break;
     default:
       console.log("command not recognized: " + command.toString());
       return;
