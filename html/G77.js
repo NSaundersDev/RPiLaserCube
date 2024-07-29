@@ -20,8 +20,6 @@ function openWebSocket() {
     startPlots()
   }
   Socket.onmessage = function(evt) {
-    console.log("event data:")
-    console.log(evt.data);
     processIncomingData(evt.data)
   }
   Socket.onerror = function() {
@@ -46,7 +44,7 @@ function closeSocket() {
 }
 
 function processIncomingData(data) {
-  console.log(data.toString());
+  // console.log(data.toString());
   dataStrings = data.split(",")
   let dateStr = dataStrings[0]; // get datetime for runtime's now
   let datetime = new Date();
@@ -58,6 +56,8 @@ function processIncomingData(data) {
 }
 
 function updateHeaderDisplay() {
+  let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
+  // console.log("thermo 8 val: " + thermo8Value);
   document.getElementById('thermo1Value').innerHTML = dataStrings[1]
   document.getElementById('thermo2Value').innerHTML = dataStrings[2]
   document.getElementById('thermo3Value').innerHTML = dataStrings[3]
@@ -65,7 +65,7 @@ function updateHeaderDisplay() {
   document.getElementById('thermo5Value').innerHTML = dataStrings[5]
   document.getElementById('thermo6Value').innerHTML = dataStrings[6]
   document.getElementById('thermo7Value').innerHTML = dataStrings[7]
-  document.getElementById('thermo8Value').innerHTML = dataStrings[8]
+  document.getElementById('thermo8Value').innerHTML = thermo8Value;
 }
 
 function writeMessage(str) {
