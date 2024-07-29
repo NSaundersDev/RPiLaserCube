@@ -157,6 +157,7 @@ function updateRecordButton(recordState) {
 }
 
 function startPlots() {
+  
   dataPlot = new Dygraph(document.getElementById("chartDiv"), graphDataSet, {
     drawPoints: false,
     legend: "always",
@@ -200,7 +201,7 @@ function startPlots() {
         valueFormatter: function(ms) {
           var myDate = new Date(ms)
           myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds()
-          return myDate.getHours() + ":" + myDate.getMinutes()
+          return myDate.getHours() + ":" + myDate.getMinutes();
         }
       },
       y: {
@@ -209,7 +210,7 @@ function startPlots() {
         includeZero: true
       },
     }
-  })
+  });
 }
 
 function resetShaftCounter() {
