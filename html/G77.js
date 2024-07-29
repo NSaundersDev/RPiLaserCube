@@ -227,9 +227,9 @@ function changeVisibility(el, num) {
 
 function sampleRate() {
   var sampleRate = document.getElementById('sampleRate').value
-  if (sampleRate < 250) {
-    document.getElementById('sampleRate').value = 250
-    sampleRate = 250
+  if (sampleRate < 100) {
+    document.getElementById('sampleRate').value = 100
+    sampleRate = 100
   }
   Socket.send("d," + sampleRate)
 }

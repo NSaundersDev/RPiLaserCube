@@ -9,15 +9,13 @@ const server = http.createServer(app);
 
 const ws_server = new WebSocket.Server({ server });
 
+const READ_SCRIPT = './var/www/html/temperatureServer/read_all_temperatures.sh';
+const LOG_SCRIPT = './var/www/html/temperatureServer/log_all_temperatures.sh';
 let recordState = 0;
 let sampleInterval = 1000; // default one sample per second
 let interval = null;
 
 ws_server.on('connection', function connection(ws) {
-
-  ws.on('connection', function connection(ws) {
-    ws.isAlive = true;
-  });
 
   ws.on('message', function incoming(message) {
     let strings = message.toString().split(",");
@@ -45,7 +43,7 @@ function processCommand(commands, ws) {
        sampleInterval = 1000;
        interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
-          exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
+          exec(READ_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -61,7 +59,8 @@ function processCommand(commands, ws) {
       recordState = 1;
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
-          exec('./log_all_temperatures.sh', (error, stdout, stderr) => {
+          console.log(LOG_SCRIPT);
+          exec(LOG_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -77,7 +76,7 @@ function processCommand(commands, ws) {
       // start recording
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
-          exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
+          exec(READ_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -91,7 +90,7 @@ function processCommand(commands, ws) {
     case "stop":
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
-          exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
+          exec(READ_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -110,7 +109,7 @@ function processCommand(commands, ws) {
       sampleInterval = parseFloat(commands[1]);
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
-          exec('./read_all_temperatures.sh', (error, stdout, stderr) => {
+          exec(READ_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
