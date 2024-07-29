@@ -48,7 +48,8 @@ function closeSocket() {
 function processIncomingData(data) {
   console.log(data.toString());
   dataStrings = data.split(",")
-  let datetime = new Date(); // get datetime for runtime's now
+  let dateStr = dataStrings[0]; // get datetime for runtime's now
+  let datetime = new Date();
   graphDataSet.push([datetime, parseFloat(dataStrings[1]), parseFloat(dataStrings[2]), parseFloat(dataStrings[3]), parseFloat(dataStrings[4]), parseFloat(dataStrings[5]), parseFloat(dataStrings[6]), parseFloat(dataStrings[7]), parseFloat(dataStrings[8])])
   if (document.getElementById('dynamicPlot').checked == true) {
     updatePlots()
