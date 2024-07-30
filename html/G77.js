@@ -6,6 +6,15 @@ var dataPlot
 var paused = false
 var recording = 0
 var reconAttempts = 0
+var isPlotting = false;
+
+const DEGREES_F = "degreesF";
+const DEGREES_C = "degreesC";
+const DEGREES_F_SYMBOL = "°F";
+const DEGREES_C_SYMBOL = "°C";
+
+var currentTemperatureScale = DEGREES_C;
+var currentTemperatureSymbol = DEGREES_C_SYMBOL;
 
 function startup() {
   openWebSocket()
@@ -17,10 +26,15 @@ function openWebSocket() {
     reconAttempts = 0
     writeMessage("WebSocket OPEN")
     Socket.send("go")
-    startPlots()
   }
   Socket.onmessage = function(evt) {
-    processIncomingData(evt.data)
+    if(evt.data.length > 7) {
+      if(isPlotting == false) {
+        startPlots();
+        isPlotting = true;
+      }
+      processIncomingData(evt.data)
+    }
   }
   Socket.onerror = function() {
     writeMessage("WebSocket ERROR")
@@ -48,24 +62,45 @@ function processIncomingData(data) {
   dataStrings = data.split(",")
   let dateStr = dataStrings[0]; // get datetime for runtime's now
   let datetime = new Date();
+
   graphDataSet.push([datetime, parseFloat(dataStrings[1]), parseFloat(dataStrings[2]), parseFloat(dataStrings[3]), parseFloat(dataStrings[4]), parseFloat(dataStrings[5]), parseFloat(dataStrings[6]), parseFloat(dataStrings[7]), parseFloat(dataStrings[8])])
+
   if (document.getElementById('dynamicPlot').checked == true) {
     updatePlots()
   }
   updateHeaderDisplay()
 }
 
+function convertTemperatureScale(degreesC) {
+  return degreesC * 9 / 5 + 32; // return degrees F
+}
+
 function updateHeaderDisplay() {
   let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
-  // console.log("thermo 8 val: " + thermo8Value);
-  document.getElementById('thermo1Value').innerHTML = dataStrings[1]
-  document.getElementById('thermo2Value').innerHTML = dataStrings[2]
-  document.getElementById('thermo3Value').innerHTML = dataStrings[3]
-  document.getElementById('thermo4Value').innerHTML = dataStrings[4]
-  document.getElementById('thermo5Value').innerHTML = dataStrings[5]
-  document.getElementById('thermo6Value').innerHTML = dataStrings[6]
-  document.getElementById('thermo7Value').innerHTML = dataStrings[7]
-  document.getElementById('thermo8Value').innerHTML = thermo8Value;
+  let thermo1 = parseFloat(dataStrings[1]);
+  document.getElementById('thermo1Value').innerHTML = thermo1.toFixed(1);
+  document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
+  let thermo2 = parseFloat(dataStrings[2]);
+  document.getElementById('thermo2Value').innerHTML = thermo2.toFixed(1);
+  document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
+  let thermo3 = parseFloat(dataStrings[3]);
+  document.getElementById('thermo3Value').innerHTML = thermo3.toFixed(1);
+  document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
+  let thermo4 = parseFloat(dataStrings[4]);
+  document.getElementById('thermo4Value').innerHTML = thermo4.toFixed(1);
+  document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
+  let thermo5 = parseFloat(dataStrings[5]);
+  document.getElementById('thermo5Value').innerHTML = thermo5.toFixed(1);
+  document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
+  let thermo6 = parseFloat(dataStrings[6]);
+  document.getElementById('thermo6Value').innerHTML = thermo6.toFixed(1);
+  document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
+  let thermo7 = parseFloat(dataStrings[7]);
+  document.getElementById('thermo7Value').innerHTML = thermo7.toFixed(1);
+  document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
+  let thermo8 = parseFloat(thermo8Value);
+  document.getElementById('thermo8Value').innerHTML = thermo8.toFixed(1);
+  document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
 }
 
 function writeMessage(str) {
@@ -229,7 +264,7 @@ function changeVisibility(el, num) {
 function sampleRate() {
   var sampleRate = document.getElementById('sampleRate').value
   if (sampleRate < 100) {
-    document.getElementById('sampleRate').value = 100
+    document.getElementById('sampleRate').vupdatalue = 100
     sampleRate = 100
   }
   Socket.send("d," + sampleRate)
@@ -258,3 +293,18 @@ function updatePlots() {
     });
   }
 }
+
+function toggleTemperatureScale() {
+  if(currentTemperatureScale == DEGREES_C) {
+    currentTemperatureScale = DEGREES_F;
+    currentTemperatureSymbol = DEGREES_F_SYMBOL;
+  }
+  else if(currentTemperatureScale == DEGREES_F) {
+    currentTemperatureScale = DEGREES_C;
+    currentTemperatureSymbol = DEGREES_C_SYMBOL;
+  }
+  Socket.send("f");
+  updateHeaderDisplay();
+}
+
+

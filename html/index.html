@@ -17,25 +17,32 @@
         <a href="http://endlas.com/"><img src="img/endlasLogo.png" alt="Endlas Additive" style="max-width:16em;max-height:12em;width:auto;height:auto;"></a>
       </div>
       <div class="AllDataContainer">
- <div class="panel" id="thermo1Panel">
+        <span style="margin-right:0.25em;">
+            <input type="radio" id="degreesC" name="choice" value="°C" onchange="toggleTemperatureScale();" checked>
+            <label for="degreesC">°C</label><br>
+            <input type="radio" id="degreesF" name="choice" value="°F" onchange="toggleTemperatureScale();">
+            <label for="degreesF">°F</label><br>
+          </form>
+        </span>
+        <div class="panel" id="thermo1Panel">
           <h4>Temp 1</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo1Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo1Scale"></span>
           </div>
         </div>
         <div class="panel" id="thermo2Panel">
           <h4>Temp 2</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo2Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo2Scale"></span>
           </div>
         </div>
         <div class="panel dropdown" id="thermo3Panel">
           <h4>Temp 3</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo3Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo3Scale"></span>
           </div>
         </div>
 
@@ -43,7 +50,7 @@
           <h4>Temp 4</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo4Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo4Scale"></span>
           </div>
         </div>
 
@@ -51,7 +58,7 @@
           <h4>Temp 5</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo5Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo5Scale"></span>
           </div>
         </div>
 
@@ -59,7 +66,7 @@
           <h4>Temp 6</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo6Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo6Scale"></span>
           </div>
         </div>
 
@@ -67,14 +74,14 @@
           <h4>Temp 7</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo7Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo7Scale"></span>
           </div>
         </div>
         <div class="panel dropdown" id="thermo8Panel">
           <h4>Temp 8</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo8Value"></span>
-            <span class="outputDataUnits">°C</span>
+            <span class="outputDataUnits" id="thermo8Scale"></span>
             
           </div>
         </div>
