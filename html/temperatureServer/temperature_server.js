@@ -10,11 +10,13 @@ const server = http.createServer(app);
 const ws_server = new WebSocket.Server({ server });
 
 const READ_SCRIPT = '/var/www/html/temperatureServer/read_all_temperatures.sh';
-const LOG_SCRIPT = '/var/www/html/temperatureServer/log_all_temperatures.sh';
-let isFarenheit = false;
-
+const LOG_SCRIPT = 'sudo ./log_temperatures.sh ';
+let currentScript = READ_SCRIPT;
+let isFahrenheit = false;
+let currentDate = null;
 
 let recordState = 0;
+let currentFileName = null;
 let sampleInterval = 1000; // default one sample per second
 let interval = null;
 
@@ -33,6 +35,7 @@ ws_server.on('connection', function connection(ws) {
 });
 
 function processCommand(commands, ws) {
+  clearInterval(interval);
   let command = commands[0];
   let name = null;
 
@@ -50,7 +53,7 @@ function processCommand(commands, ws) {
             console.error(`exec error: ${error}`);
             return;
           }
-          if(isFarenheit == true) {
+          if(isFahrenheit == true) {
             let str = JSON.stringify(stdout).split(",");
             let d = str[0] + ",";
             let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
@@ -71,16 +74,19 @@ function processCommand(commands, ws) {
       console.log("processing go command");
       return;
     case "R~":
-      // stop recording
       recordState = 1;
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
-          exec(LOG_SCRIPT, (error, stdout, stderr) => {
+          if(currentDate == null) {
+            currentDate = new Date();
+            currentFileName = commands[1];
+          }
+          exec(LOG_SCRIPT + currentDate.toLocaleTimeString() + "_" + commands[1], (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
           }
-          if(isFarenheit == true) {
+          if(isFahrenheit == true) {
             let str = JSON.stringify(stdout).split(",");
             let d = str[0] + ",";
             let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
@@ -102,7 +108,14 @@ function processCommand(commands, ws) {
       return;
     case "X":
       recordState = 0;
-      // start recording
+      exec("./stop_logging_temperatures.sh " + currentDate.toLocaleTimeString() + "_" + currentFileName, (error, stdout, stderr) => {
+        if(error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+      });
+      currentFileName = null;
+      currentDate = null;
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
           exec(READ_SCRIPT, (error, stdout, stderr) => {
@@ -110,7 +123,7 @@ function processCommand(commands, ws) {
             console.error(`exec error: ${error}`);
             return;
           }
-          if(isFarenheit == true) {
+          if(isFahrenheit == true) {
             let str = JSON.stringify(stdout).split(",");
             let d = str[0] + ",";
             let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
@@ -131,6 +144,13 @@ function processCommand(commands, ws) {
       console.log("processing stop recording command");
       return;
     case "stop":
+      exec("./stop_logging_temperatures.sh", (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        console.log("stopped logging temperatures.");
+      });
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
           exec(READ_SCRIPT, (error, stdout, stderr) => {
@@ -138,7 +158,7 @@ function processCommand(commands, ws) {
             console.error(`exec error: ${error}`);
             return;
           }
-          if(isFarenheit == true) {
+          if(isFahrenheit == true) {
             let str = JSON.stringify(stdout).split(",");
             let d = str[0] + ",";
             let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
@@ -171,7 +191,7 @@ function processCommand(commands, ws) {
             console.error(`exec error: ${error}`);
             return;
           }
-          if(isFarenheit == true) {
+          if(isFahrenheit == true) {
             let str = JSON.stringify(stdout).split(",");
             let d = str[0] + ",";
             let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
@@ -191,7 +211,7 @@ function processCommand(commands, ws) {
       });}, sampleInterval);
       break;
     case "f":
-      isFarenheit = !isFarenheit;
+      isFahrenheit = !isFahrenheit;
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
           exec(READ_SCRIPT, (error, stdout, stderr) => {
@@ -199,7 +219,7 @@ function processCommand(commands, ws) {
             console.error(`exec error: ${error}`);
             return;
           }
-          if(isFarenheit == true) {
+          if(isFahrenheit == true) {
             let str = JSON.stringify(stdout).split(",");
             let d = str[0] + ",";
             let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
