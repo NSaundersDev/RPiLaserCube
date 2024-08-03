@@ -317,7 +317,6 @@ function toggleTemperatureScale() {
     currentTemperatureSymbol = DEGREES_C_SYMBOL;
   }
   Socket.send("f");
-  if(!isHeaderLocked) {
-    updateHeaderDisplay();
-  }
+  updateHeaderDisplay();
+  updatePlots();
 }
