@@ -38,4 +38,3 @@ if __name__ == "__main__":
     filename = sys.argv[1]
     result = process_file(filename)
     print(f"{result}")
-    

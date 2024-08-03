@@ -3,14 +3,12 @@ const WebSocket = require('ws');
 const http = require('http');
 const { exec } = require('child_process');
 const app = express();
-
 const port = 8080;
 const server = http.createServer(app);
-
 const ws_server = new WebSocket.Server({ server });
-
 const READ_SCRIPT = '/var/www/html/temperatureServer/read_all_temperatures.sh';
 const LOG_SCRIPT = 'sudo ./log_temperatures.sh ';
+
 let currentScript = READ_SCRIPT;
 let isFahrenheit = false;
 let currentDate = null;
@@ -34,8 +32,14 @@ ws_server.on('connection', function connection(ws) {
   });
 });
 
+function celciusToFahrenheit(celciusTemp) {
+  return celciusTemp * 9 / 5 + 32;
+}
+
 function processCommand(commands, ws) {
+  // reset the interval for new one
   clearInterval(interval);
+
   let command = commands[0];
   let name = null;
 
@@ -56,14 +60,14 @@ function processCommand(commands, ws) {
           if(isFahrenheit == true) {
             let str = JSON.stringify(stdout).split(",");
             let d = str[0] + ",";
-            let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
-            let t2 = (parseFloat(str[2]) * 9 / 5 + 32).toString()+",";
-            let t3 = (parseFloat(str[3]) * 9 / 5 + 32).toString()+",";
-            let t4 = (parseFloat(str[4]) * 9 / 5 + 32).toString()+",";
-            let t5 = (parseFloat(str[5]) * 9 / 5 + 32).toString()+",";
-            let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
-            let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
-            let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
+            let t1 = (celciusToFahrenheit(parseFloat(str[1]))).toString() + ",";
+            let t2 = (celciusToFahrenheit(parseFloat(str[2]))).toString() + ",";
+            let t3 = (celciusToFahrenheit(parseFloat(str[3]))).toString() + ",";
+            let t4 = (celciusToFahrenheit(parseFloat(str[4]))).toString() + ",";
+            let t5 = (celciusToFahrenheit(parseFloat(str[5]))).toString() + ",";
+            let t6 = (celciusToFahrenheit(parseFloat(str[6]))).toString() + ",";
+            let t7 = (celciusToFahrenheit(parseFloat(str[7]))).toString() + ",";
+            let t8 = (celciusToFahrenheit(parseFloat(str[8]))).toString() + ",";
             ws.send(JSON.stringify(d+t1+t2+t3+t4+t5+t6+t7+t8));
           }
           else {

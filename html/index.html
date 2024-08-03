@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">  
-  <link rel="stylesheet" type="text/css" src="dygraph.css" />
-  <link rel="stylesheet" type="text/css" href="G77.css">
+  <link rel="stylesheet" type="text/css" src="css/dygraph.css" />
+  <link rel="stylesheet" type="text/css" href="css/G77.css">
   <title>Endlas G77</title>
-  <script type="text/javascript" src="dygraph.min.js"></script>
-  <script type="text/javascript" src="G77.js"></script>  
+  <script type="text/javascript" src="js/dygraph.min.js"></script>
+  <script type="text/javascript" src="js/G77.js"></script>  
+  <script type="text/javascript" src="js/jquery-3.7.1.min.js"></script>
 </head>
 
 <body onload="startup();">
@@ -14,7 +15,9 @@
   <body>
     <header>
       <div class="logos">
-        <a href="http://endlas.com/"><img src="img/endlasLogo.png" alt="Endlas Additive" style="max-width:16em;max-height:12em;width:auto;height:auto;"></a>
+        <a href="http://endlas.com/">
+          <img src="img/endlasLogo.png" alt="Endlas Additive" style="max-width:16em;max-height:12em;width:auto;height:auto;margin-left:0.5em;" />
+        </a>
       </div>
       <div class="AllDataContainer">
         <span style="margin-right:0.25em;">
@@ -25,65 +28,227 @@
           </form>
         </span>
         <div class="panel" id="thermo1Panel">
-          <h4>Temp 1</h4>
+          <h4 id="editable-heading1" tabindex="0">Temp 1</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo1Value"></span>
             <span class="outputDataUnits" id="thermo1Scale"></span>
           </div>
         </div>
+	  <script>
+	    const heading1 = document.getElementById('editable-heading1');
+	    heading1.addEventListener('click', function() {
+	      const editableText1 = document.createElement('input');
+	      editableText1.value = heading1.textContent;
+	      editableText1.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading1.textContent = editableText1.value;
+                  editableText1.remove();
+                }
+              });
+	      editableText1.addEventListener('blur', function() {
+	        heading1.textContent = editableText1.value;
+	        editableText1.remove();
+	      });
+	      heading1.textContent = '';
+	      heading1.appendChild(editableText1);
+              editableText1.focus();
+	    });
+	</script>
         <div class="panel" id="thermo2Panel">
-          <h4>Temp 2</h4>
+          <h4 id="editable-heading2">Temp 2</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo2Value"></span>
             <span class="outputDataUnits" id="thermo2Scale"></span>
           </div>
         </div>
+	  <script>
+	    const heading2 = document.getElementById('editable-heading2');
+	    heading2.addEventListener('click', function() {
+	      const editableText = document.createElement('input');
+	      editableText.value = heading2.textContent;
+              heading2.focus();
+	      editableText.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading2.textContent = editableText.value;
+                  editableText.remove();
+                }
+              });
+	      editableText.addEventListener('blur', function() {
+	        heading2.textContent = editableText.value;
+	        editableText.remove();
+	      });
+	      heading2.textContent = '';
+	      heading2.appendChild(editableText);
+              editableText.focus();
+	    });
+	</script>
         <div class="panel dropdown" id="thermo3Panel">
-          <h4>Temp 3</h4>
+          <h4 id="editable-heading3">Temp 3</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo3Value"></span>
             <span class="outputDataUnits" id="thermo3Scale"></span>
           </div>
         </div>
-
+	  <script>
+	    const heading3 = document.getElementById('editable-heading3');
+	    heading3.addEventListener('click', function() {
+	      const editableText = document.createElement('input');
+	      editableText.value = heading3.textContent;
+              heading3.focus();
+	      editableText.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading3.textContent = editableText.value;
+                  editableText.remove();
+                }
+              });
+	      editableText.addEventListener('blur', function() {
+	        heading3.textContent = editableText.value;
+	        editableText.remove();
+	      });
+	      heading3.textContent = '';
+	      heading3.appendChild(editableText);
+              editableText.focus();
+	    });
+	</script>
         <div class="panel dropdown" id="thermo4Panel">
-          <h4>Temp 4</h4>
+          <h4 id="editable-heading4">Temp 4</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo4Value"></span>
             <span class="outputDataUnits" id="thermo4Scale"></span>
           </div>
         </div>
-
+	  <script>
+	    const heading4 = document.getElementById('editable-heading4');
+	    heading4.addEventListener('click', function() {
+	      const editableText = document.createElement('input');
+	      editableText.value = heading4.textContent;
+              heading4.focus();
+	      editableText.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading4.textContent = editableText.value;
+                  editableText.remove();
+                }
+              });
+	      editableText.addEventListener('blur', function() {
+	        heading4.textContent = editableText.value;
+	        editableText.remove();
+	      });
+	      heading4.textContent = '';
+	      heading4.appendChild(editableText);
+              editableText.focus();
+	    });
+	</script>
         <div class="panel dropdown" id="thermo5Panel">
-          <h4>Temp 5</h4>
+          <h4 id="editable-heading5">Temp 5</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo5Value"></span>
             <span class="outputDataUnits" id="thermo5Scale"></span>
           </div>
         </div>
-
+	  <script>
+	    const heading5 = document.getElementById('editable-heading5');
+	    heading5.addEventListener('click', function() {
+	      const editableText = document.createElement('input');
+	      editableText.value = heading5.textContent;     
+              heading5.focus();
+	      editableText.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading5.textContent = editableText.value;
+                  editableText.remove();
+                }
+              });
+	      editableText.addEventListener('blur', function() {
+	        heading5.textContent = editableText.value;
+	        editableText.remove();
+	      });
+	      heading5.textContent = '';
+	      heading5.appendChild(editableText);
+              editableText.focus();
+	    });
+	</script>
         <div class="panel dropdown" id="thermo6Panel">
-          <h4>Temp 6</h4>
+          <h4 id="editable-heading6">Temp 6</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo6Value"></span>
             <span class="outputDataUnits" id="thermo6Scale"></span>
           </div>
         </div>
-
+	  <script>
+	    const heading6 = document.getElementById('editable-heading6');
+	    heading6.addEventListener('click', function() {
+	      const editableText = document.createElement('input');
+	      editableText.value = heading6.textContent;
+              heading6.focus();
+	      editableText.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading6.textContent = editableText.value;
+                  editableText.remove();
+                }
+              });
+	      editableText.addEventListener('blur', function() {
+	        heading6.textContent = editableText.value;
+	        editableText.remove();
+	      });
+	      heading6.textContent = '';
+	      heading6.appendChild(editableText);
+              editableText.focus();
+	    });
+	</script>
         <div class="panel dropdown" id="thermo7Panel">
-          <h4>Temp 7</h4>
+          <h4 id="editable-heading7">Temp 7</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo7Value"></span>
             <span class="outputDataUnits" id="thermo7Scale"></span>
           </div>
         </div>
+	  <script>
+	    const heading7 = document.getElementById('editable-heading7');
+	    heading7.addEventListener('click', function() {
+	      const editableText = document.createElement('input');
+	      editableText.value = heading7.textContent;
+              heading7.focus();
+	      editableText.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading7.textContent = editableText.value;
+                  editableText.remove();
+                }
+              });
+	      editableText.addEventListener('blur', function() {
+	        heading7.textContent = editableText.value;
+	        editableText.remove();
+	      });
+	      heading7.textContent = '';
+	      heading7.appendChild(editableText);
+              editableText.focus();
+	    });
+	</script>
         <div class="panel dropdown" id="thermo8Panel">
-          <h4>Temp 8</h4>
+          <h4 id="editable-heading8">Temp 8</h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo8Value"></span>
-            <span class="outputDataUnits" id="thermo8Scale"></span>
-            
+            <span class="outputDataUnits" id="thermo8Scale"></span>  
           </div>
+	  <script>
+	    const heading8 = document.getElementById('editable-heading8');
+	    heading8.addEventListener('click', function() {
+	      const editableText = document.createElement('input');
+	      editableText.value = heading8.textContent;
+              heading8.focus();
+	      editableText.addEventListener('keydown', function(event) {
+	        if (event.key === 'Enter') {
+                  heading8.textContent = editableText.value;
+                  editableText.remove();
+                }
+              });
+	      editableText.addEventListener('blur', function() {
+	        heading8.textContent = editableText.value;
+	        editableText.remove();
+	      });
+	      heading8.textContent = '';
+	      heading8.appendChild(editableText);
+              editableText.focus();
+	    });
+	</script>	       
         </div>
       </div>
     </header>
@@ -95,11 +260,10 @@
       <a href="http://192.168.1.9/data/" id="downloadBtnElem" class="controlBtn"><img src="img/downloadNormal.png" onmouseover="this.src='img/downloadPressed2.png'; writeMessage('Download a Data Set')" onmouseout="this.src='img/downloadNormal.png'; writeMessage('')"alt="Download a dataSet"></a>
       <div id="message"></div>
       <div id="settingsElem" class="settingsDropdown">
-        <img src="img/settingsIcon.png" alt="Settings">
-        <div class="settings-content">
+        <span style="">
           <input type="text" id="sampleRate" value="1000" onmouseover="writeMessage('Sample Interval (ms)')" onmouseout="writeMessage('')">
-          <button type="button" onclick="sampleRate();" onmouseover="writeMessage('Click to set Sample Interval (ms)')" onmouseout="writeMessage('')">Set Sampling Interval</button>          
-        </div>
+          <button type="button" onclick="sampleRate();" onmouseover="writeMessage('Click to set Sample Interval (ms)')" onmouseout="writeMessage('')">Set Sampling Interval (ms)</button>
+        </span>       
       </div>
     </div>
     
@@ -158,5 +322,4 @@
     </div>
 <body>
 </html>
-<script type="text/javascript" src="dygraph.min.js"></script>
-<script type="text/javascript" src="G77.js"></script>  
+  
