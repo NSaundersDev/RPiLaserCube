@@ -8,7 +8,7 @@ var recording = 0
 var reconAttempts = 0
 var isPlotting = false;
 
-var headerTitles = ["Temp 1", "Temp 2", "Temp 3", "Temp 4", "Temp 5", "Temp 6", "Temp 7", "Temp 8"];
+var headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 
 const DEGREES_F = "degreesF";
 const DEGREES_C = "degreesC";

@@ -8,7 +8,7 @@ const server = http.createServer(app);
 const ws_server = new WebSocket.Server({ server });
 const READ_SCRIPT = '/var/www/html/temperature_server/read_all_temperatures.sh';
 const LOG_SCRIPT = 'sudo ./log_temperatures.sh ';
-
+const INIT_LOG_SCRIPT = 'sudo python ./init_log_temperatures.py ';
 let currentScript = READ_SCRIPT;
 let isFahrenheit = false;
 let currentDate = null;
@@ -18,7 +18,7 @@ let currentFileName = null;
 let sampleInterval = 1000; // default one sample per second
 let interval = null;
 
-let headerTitles = ["Temp 1", "Temp 2", "Temp 3", "Temp 4", "Temp 5", "Temp 6", "Temp 7", "Temp 8"];
+let headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 
 ws_server.on('connection', function connection(ws) {
 
@@ -82,6 +82,11 @@ function processCommand(commands, ws) {
     case "R~":
       // set record state to on
       recordState = 1;
+      if(currentDate == null) {
+        currentDate = new Date();
+        currentFileName = commands[1];
+      }
+      initTemperatureLog();
       interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
           if(currentDate == null) {
@@ -257,6 +262,21 @@ function processCommand(commands, ws) {
       console.log("command not recognized: " + command.toString());
       return;
   }
+}
+
+function initTemperatureLog() {
+  console.log("init temperature log");
+  let args = headerTitles[0];
+  for(let i = 1; i < headerTitles.length; i++) {
+    args = args + " " + headerTitles[i];
+  }
+  console.log("args: " + args);
+  exec(INIT_LOG_SCRIPT + currentDate.toLocaleTimeString() + "_" + currentFileName + " " + args, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+  });
 }
 
 server.listen(port, function(err) {
