@@ -47,6 +47,7 @@
               });
 	      editableText1.addEventListener('blur', function() {
 	        heading1.textContent = editableText1.value;
+                changeHeaderText(0, editableText1.value);
 	        editableText1.remove();
 	      });
 	      heading1.textContent = '';
@@ -75,6 +76,7 @@
               });
 	      editableText.addEventListener('blur', function() {
 	        heading2.textContent = editableText.value;
+                changeHeaderText(1, editableText.value);
 	        editableText.remove();
 	      });
 	      heading2.textContent = '';
@@ -103,6 +105,7 @@
               });
 	      editableText.addEventListener('blur', function() {
 	        heading3.textContent = editableText.value;
+                changeHeaderText(2, editableText.value);
 	        editableText.remove();
 	      });
 	      heading3.textContent = '';
@@ -131,6 +134,7 @@
               });
 	      editableText.addEventListener('blur', function() {
 	        heading4.textContent = editableText.value;
+                changeHeaderText(3, editableText.value);
 	        editableText.remove();
 	      });
 	      heading4.textContent = '';
@@ -159,6 +163,7 @@
               });
 	      editableText.addEventListener('blur', function() {
 	        heading5.textContent = editableText.value;
+                changeHeaderText(4, editableText.value);
 	        editableText.remove();
 	      });
 	      heading5.textContent = '';
@@ -187,6 +192,7 @@
               });
 	      editableText.addEventListener('blur', function() {
 	        heading6.textContent = editableText.value;
+                changeHeaderText(6, editableText.value);
 	        editableText.remove();
 	      });
 	      heading6.textContent = '';
@@ -215,6 +221,7 @@
               });
 	      editableText.addEventListener('blur', function() {
 	        heading7.textContent = editableText.value;
+                changeHeaderText(6, editableText.value);
 	        editableText.remove();
 	      });
 	      heading7.textContent = '';
@@ -237,11 +244,13 @@
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading8.textContent = editableText.value;
+                  changeHeaderText(7, editableText.value);
                   editableText.remove();
                 }
               });
 	      editableText.addEventListener('blur', function() {
 	        heading8.textContent = editableText.value;
+                changeHeaderText(7, editableText.value);
 	        editableText.remove();
 	      });
 	      heading8.textContent = '';
@@ -274,40 +283,40 @@
       </div>
       <div class="graphControls">
         <input id="plotTemp1" checked onclick="changeVisibility(this,0)" type="checkbox">
-        <label for="plotTemp1">Temp 1</label>
+        <label for="plotTemp1" id="plotTempLabel1">Temp 1</label>
       </div>
 
       <div class="graphControls">
         <input id="plotTemp2" checked onclick="changeVisibility(this,1)" type="checkbox">
-        <label for="plotTemp2">Temp 2</label>
+        <label for="plotTemp2" id="plotTempLabel2">Temp 2</label>
       </div>
 
       <div class="graphControls">
         <input id="plotTemp3" checked onclick="changeVisibility(this,2)" type="checkbox">
-        <label for="plotTemp3">Temp 3</label>
+        <label for="plotTemp3" id="plotTempLabel3">Temp 3</label>
       </div>
       <div class="graphControls">
         <input id="plotTemp4" checked onclick="changeVisibility(this,3)" type="checkbox">
-        <label for="plotTemp4">Temp 4</label>
+        <label for="plotTemp4" id="plotTempLabel4">Temp 4</label>
       </div>
 
       <div class="graphControls">
         <input id="plotTemp5" checked onclick="changeVisibility(this,4)" type="checkbox">
-        <label for="plotTemp5">Temp 5</label>
+        <label for="plotTemp5" id="plotTempLabel5">Temp 5</label>
       </div>
       <div class="graphControls">
         <input id="plotTemp6" checked onclick="changeVisibility(this,5)" type="checkbox">
-        <label for="plotTemp6">Temp 6</label>
+        <label for="plotTemp6" id="plotTempLabel6">Temp 6</label>
       </div>
 
       <div class="graphControls">
         <input id="plotTemp7" checked onclick="changeVisibility(this,6)" type="checkbox">
-        <label for="plotTemp7">Temp 7</label>
+        <label for="plotTemp7" id="plotTempLabel7">Temp 7</label>
       </div>
 
       <div class="graphControls">
         <input id="plotTemp8" checked onclick="changeVisibility(this,7)" type="checkbox">
-        <label for="plotTemp8">Temp 8</label>
+        <label for="plotTemp8" id="plotTempLabel8">Temp 8</label>
       </div>
 
       <span id="chartInstructions"> Disable "Live Plot" to explore Data. Double-clicking zooms all the way out. Click and drag to zoom. Shift-drag will pan.</span>

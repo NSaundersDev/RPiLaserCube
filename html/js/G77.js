@@ -7,7 +7,9 @@ var paused = false
 var recording = 0
 var reconAttempts = 0
 var isPlotting = false;
-var isHeaderLocked = false;
+
+var headerTitles = ["Temp 1", "Temp 2", "Temp 3", "Temp 4", "Temp 5", "Temp 6", "Temp 7", "Temp 8"];
+
 const DEGREES_F = "degreesF";
 const DEGREES_C = "degreesC";
 const DEGREES_F_SYMBOL = "°F";
@@ -69,23 +71,11 @@ function processIncomingData(data) {
   if (document.getElementById('dynamicPlot').checked == true) {
     updatePlots()
   }
-  if(!isHeaderLocked) {
-    updateHeaderDisplay()
-  }
+  updateHeaderDisplay()
 }
 
 function convertTemperatureScale(degreesC) {
   return degreesC * 9 / 5 + 32; // return degrees F
-}
-
-function toggleHeaderLock(isLocked) {
-  if(isLocked) {
-    console.log("unlocking header");
-    isHeaderLocked = false;
-  } else {
-    console.log("locking header");
-    isHeaderLocked = true;
-  }
 }
 
 function updateHeaderDisplay() {
@@ -307,6 +297,22 @@ function updatePlots() {
   }
 }
 
+function changeHeaderText(index, text) {
+  headerTitles[index] = text;
+  console.log("header titles: " + headerTitles.toString());
+  let str = "update_headers, ";
+  for(let i = 0; i < headerTitles.length; i++) {
+    if(i != headerTitles.length - 1) {
+      str += headerTitles[i] + ", ";
+    } else {
+      str += headerTitles[i];
+    }
+    document.getElementById('plotTempLabel'+ (i + 1).toString()).innerHTML = headerTitles[i];
+//    console.log(document.getElementById('plotTempLabel' + (i+1).toString()).innt
+  }
+  Socket.send(str);
+}
+
 function toggleTemperatureScale() {
   if(currentTemperatureScale == DEGREES_C) {
     currentTemperatureScale = DEGREES_F;
@@ -317,6 +323,7 @@ function toggleTemperatureScale() {
     currentTemperatureSymbol = DEGREES_C_SYMBOL;
   }
   Socket.send("f");
+  clearDatasets();
   updateHeaderDisplay();
   updatePlots();
 }
