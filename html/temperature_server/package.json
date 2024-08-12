@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async-lock": "^1.4.1",
     "bufferutil": "^4.0.8",
     "child_process": "^1.0.2",
     "express": "^4.19.2",

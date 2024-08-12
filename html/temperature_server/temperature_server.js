@@ -49,9 +49,8 @@ function processCommand(commands, ws) {
       console.log(commands[1]);
     }
   }
-
-  switch(command){
-    case "go":
+  switch(commands[0]) {
+   case "go":
        interval = setInterval(() => {
         ws_server.clients.forEach((client) => {
           exec(READ_SCRIPT, (error, stdout, stderr) => {
