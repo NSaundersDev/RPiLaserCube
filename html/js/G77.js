@@ -31,7 +31,7 @@ function startup() {
 //
 function openWebSocket() {
   // Define websocket for data communiction
-  Socket = new WebSocket("ws://192.168.1.9:8080");
+  Socket = new WebSocket("ws://192.168.0.77:8080");
 
   Socket.onopen = function() {
     reconAttempts = 0
