@@ -32,33 +32,38 @@ function startup() {
 function openWebSocket() {
   // Define websocket for data communiction
   Socket = new WebSocket("ws://192.168.0.77:8080");
-
+  // Define behavior on socket open
   Socket.onopen = function() {
-    reconAttempts = 0
-    writeMessage("WebSocket OPEN")
-    Socket.send("go")
+    // attempt counter reset
+    reconAttempts = 0;
+    writeMessage("WebSocket OPEN");
+    // indicate to the temperature server we are ready for data
+    Socket.send("go");
   }
+  // Define behavior when receiving a message over the socket
   Socket.onmessage = function(evt) {
-    if(evt.data.length > 7) {
-      if(isPlotting == false) {
-        startPlots();
-        isPlotting = true;
-      }
-      processIncomingData(evt.data)
+    // if not plotting, start
+    if(isPlotting == false) {
+      startPlots();
+      isPlotting = true;
     }
+    // process the socket data
+    processIncomingData(evt.data)
   }
+  // Define behavior on socket error
   Socket.onerror = function() {
     writeMessage("WebSocket ERROR")
     console.log("WebSocket ERROR")
   }
+  // Define behavior on socket close
   Socket.onclose = function() {
     writeMessage("WebSocket CLOSED")
     console.log("WebSocket CLOSED")
     // tries to connect 3 times...
-    if (reconAttempts < 2){
-      reconAttempts++
-      writeMessage("Reconnecting...")
-      openWebSocket()
+    if (reconAttempts < 2) {
+      reconAttempts++;
+      writeMessage("Reconnecting...");
+      openWebSocket();
     }
   }
   window.onbeforeunload = function(event) {
@@ -92,31 +97,35 @@ function processIncomingData(data) {
 // ** Function to handle updating the header display when new data is received
 //
 function updateHeaderDisplay() {
+  let scales = document.getElementsByClass('outputDataUnits');
+  for(let i = 0; i < scales.length; i++) {
+    scales[i].innerHTML = currentTemperatureSymbol;
+  }
   let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
   let thermo1 = parseFloat(dataStrings[1]);
   document.getElementById('thermo1Value').innerHTML = thermo1.toFixed(1);
-  document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
   let thermo2 = parseFloat(dataStrings[2]);
   document.getElementById('thermo2Value').innerHTML = thermo2.toFixed(1);
-  document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
   let thermo3 = parseFloat(dataStrings[3]);
   document.getElementById('thermo3Value').innerHTML = thermo3.toFixed(1);
-  document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
   let thermo4 = parseFloat(dataStrings[4]);
   document.getElementById('thermo4Value').innerHTML = thermo4.toFixed(1);
-  document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
   let thermo5 = parseFloat(dataStrings[5]);
   document.getElementById('thermo5Value').innerHTML = thermo5.toFixed(1);
-  document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
   let thermo6 = parseFloat(dataStrings[6]);
   document.getElementById('thermo6Value').innerHTML = thermo6.toFixed(1);
-  document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
   let thermo7 = parseFloat(dataStrings[7]);
   document.getElementById('thermo7Value').innerHTML = thermo7.toFixed(1);
-  document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
   let thermo8 = parseFloat(thermo8Value);
   document.getElementById('thermo8Value').innerHTML = thermo8.toFixed(1);
-  document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
+  //document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
 }
 
 //

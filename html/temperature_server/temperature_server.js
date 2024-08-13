@@ -210,6 +210,7 @@ function processCommand(commands, ws) {
       return;
 
     case "d":
+      clearInterval(interval);
       let val = parseFloat(commands[1]);
       console.log(val);
       sampleInterval = parseFloat(commands[1]);
@@ -240,10 +241,10 @@ function processCommand(commands, ws) {
       });}, sampleInterval);
       break;
     case "f":
+      outF = "";
       isFahrenheit = !isFahrenheit;
       interval = setInterval(() => {
-        ws_server.clients.forEach((client) => {
-          exec(READ_SCRIPT, (error, stdout, stderr) => {
+        exec(READ_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -259,11 +260,13 @@ function processCommand(commands, ws) {
             let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
             let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
             let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
-            ws.send(JSON.stringify(d+t1+t2+t3+t4+t5+t6+t7+t8));
+            outF = d+t1+t2+t3+t4+t5+t6+t7+t8;
           }
           else {
-            ws.send(JSON.stringify(stdout));
+            outF = stdout;
           }
+        ws_server.clients.forEach((client) => {
+          ws.send(JSON.stringify(outF));
         });
       });}, sampleInterval);
       recordState = 0;

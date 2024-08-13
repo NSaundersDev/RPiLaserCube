@@ -55,17 +55,18 @@ h4 {
 }
 
 .outputData {
+  font-size: 1em;
   display: flex;
   flex-flow: row nowrap;
   overflow: hidden;
 }
 
 .outputDataValue {
-  font-size: 35px;
+  font-size: 1em;
 }
 
 .outputDataUnits {
-  font-size: 20px;
+  font-size: 1em;
   align-self: flex-start;
 }
 
