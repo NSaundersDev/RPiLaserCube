@@ -16,8 +16,8 @@ var reconAttempts = 0
 var isPlotting = false;
 var currentTemperatureScale = DEGREES_C;
 var currentTemperatureSymbol = DEGREES_C_SYMBOL;
-//var headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
-var headerTitles = ["", "", "", "", "", "", "", ""];
+var headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
+//var headerTitles = ["", "", "", "", "", "", "", ""];
 
 // **
 // ** Main entry point for setting up the client side NodeJS widgets
@@ -99,9 +99,9 @@ function processIncomingData(data) {
       //console.log("header title: "+headerTitles[i-1]);
     }
   } else {
+  
 //  console.log("header titles: "+headerTitles);
     // parse out the comma separated data list to a list
-    dataStrings = data.split(",");
     let dateStr = dataStrings[0]; // get datetime for runtime's now
     // console.log("dateStr: " + dateStr)
     let datetime = new Date();
@@ -109,41 +109,39 @@ function processIncomingData(data) {
     if(document.getElementById('dynamicPlot').checked == true) {
       updatePlots()
     }
+    updateHeaderDisplay();
   }
-  updateHeaderDisplay();
 }
 
 //
 // ** Function to handle updating the header display when new data is received
 //
 function updateHeaderDisplay() {
-  if(dataStrings.length > 7) {
-    let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
-    let thermo1 = parseFloat(dataStrings[1]);
-    document.getElementById('thermo1Value').innerHTML = thermo1.toFixed(1);
-    document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
-    let thermo2 = parseFloat(dataStrings[2]);
-    document.getElementById('thermo2Value').innerHTML = thermo2.toFixed(1);
-    document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
-    let thermo3 = parseFloat(dataStrings[3]);
-    document.getElementById('thermo3Value').innerHTML = thermo3.toFixed(1);
-    document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
-    let thermo4 = parseFloat(dataStrings[4]);
-    document.getElementById('thermo4Value').innerHTML = thermo4.toFixed(1);
-    document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
-    let thermo5 = parseFloat(dataStrings[5]);
-    document.getElementById('thermo5Value').innerHTML = thermo5.toFixed(1);
-    document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
-    let thermo6 = parseFloat(dataStrings[6]);
-    document.getElementById('thermo6Value').innerHTML = thermo6.toFixed(1);
-    document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
-    let thermo7 = parseFloat(dataStrings[7]);
-    document.getElementById('thermo7Value').innerHTML = thermo7.toFixed(1);
-    document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
-    let thermo8 = parseFloat(thermo8Value);
-    document.getElementById('thermo8Value').innerHTML = thermo8.toFixed(1);
-    document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
-  }
+  let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
+  let thermo1 = parseFloat(dataStrings[1]);
+  document.getElementById('thermo1Value').innerHTML = thermo1.toFixed(1);
+  document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
+  let thermo2 = parseFloat(dataStrings[2]);
+  document.getElementById('thermo2Value').innerHTML = thermo2.toFixed(1);
+  document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
+  let thermo3 = parseFloat(dataStrings[3]);
+  document.getElementById('thermo3Value').innerHTML = thermo3.toFixed(1);
+  document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
+  let thermo4 = parseFloat(dataStrings[4]);
+  document.getElementById('thermo4Value').innerHTML = thermo4.toFixed(1);
+  document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
+  let thermo5 = parseFloat(dataStrings[5]);
+  document.getElementById('thermo5Value').innerHTML = thermo5.toFixed(1);
+  document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
+  let thermo6 = parseFloat(dataStrings[6]);
+  document.getElementById('thermo6Value').innerHTML = thermo6.toFixed(1);
+  document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
+  let thermo7 = parseFloat(dataStrings[7]);
+  document.getElementById('thermo7Value').innerHTML = thermo7.toFixed(1);
+  document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
+  let thermo8 = parseFloat(thermo8Value);
+  document.getElementById('thermo8Value').innerHTML = thermo8.toFixed(1);
+  document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
 }
 
 //
@@ -367,11 +365,11 @@ function changeHeaderText(index, text) {
     } else {
       str += headerTitles[i];
     }
-    console.log("strr: " + str);
+//    console.log("strr: " + str);
     document.getElementById('plotTempLabel'+ (i + 1).toString()).innerHTML = headerTitles[i];
 //  console.log(document.getElementById('plotTempLabel' + (i+1).toString()).innt
   }
-  console.log("change header text str: " +str);
+  //console.log("change header text str: " +str);
   Socket.send(str);
 }
 
@@ -392,8 +390,7 @@ function toggleTemperatureScale() {
   Socket.send("f");
   // update the header with the new values
   updateHeaderDisplay();
+  updatePlots();
   // clear the dygraph for the new temperature scale
   clearDatasets();
-  
-  updatePlots();
 }

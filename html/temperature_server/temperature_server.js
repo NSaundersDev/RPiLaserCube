@@ -22,9 +22,11 @@ let interval = null;
 // default header titles
 let headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 
+// define the server behavior
 ws_server.on('connection', function connection(ws) {
 
   ws.on('message', function incoming(message) {
+    // parse the data and send to the process method
     let strings = message.toString().split(",");
     processCommand(strings, ws);
   });
@@ -49,49 +51,40 @@ function processCommand(commands, ws) {
   // the first index is the command
   let command = commands[0];
   let name = null;
-
+  
   switch(command) {
+   // initial command to begin sending data at a set interval
    case "go":
-       let str = "headings,";
-       for(let i = 0; i < headerTitles.length; i++) {
-         if(i != headerTitles.length - 1) {
-           str += headerTitles[i] + ",";
-         } else {
-           str += headerTitles[i];
-         }
-       }
-       ws.send(JSON.stringify(str));
-       let outgo = "";
-       interval = setInterval(() => {
-         exec(READ_SCRIPT, (error, stdout, stderr) => {
-          if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-          }
-          if(isFahrenheit == true) {
-            let str = JSON.stringify(stdout).split(",");
-            let d = str[0] + ",";
-            let t1 = (celciusToFahrenheit(parseFloat(str[1]))).toString() + ",";
-            let t2 = (celciusToFahrenheit(parseFloat(str[2]))).toString() + ",";
-            let t3 = (celciusToFahrenheit(parseFloat(str[3]))).toString() + ",";
-            let t4 = (celciusToFahrenheit(parseFloat(str[4]))).toString() + ",";
-            let t5 = (celciusToFahrenheit(parseFloat(str[5]))).toString() + ",";
-            let t6 = (celciusToFahrenheit(parseFloat(str[6]))).toString() + ",";
-            let t7 = (celciusToFahrenheit(parseFloat(str[7]))).toString() + ",";
-            let t8 = (celciusToFahrenheit(parseFloat(str[8]))).toString() + ",";
-            outgo = d + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
-//            ws.send(JSON.stringify(d+t1+t2+t3+t4+t5+t6+t7+t8));
-          }
-          else {
-            outgo = stdout;
-            //ws.send(JSON.stringify(stdout));
-          }
-        });
-        ws_server.clients.forEach((client) => {
-          ws.send(JSON.stringify(outgo));
-      });}, sampleInterval);
-      console.log("processing go command");
-      return;
+     clearInterval(interval);
+     let outgo = "";
+     interval = setInterval(() => {
+       exec(READ_SCRIPT, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        if(isFahrenheit == true) {
+          let str = JSON.stringify(stdout).split(",");
+          let d = str[0] + ",";
+          let t1 = (celciusToFahrenheit(parseFloat(str[1]))).toString() + ",";
+          let t2 = (celciusToFahrenheit(parseFloat(str[2]))).toString() + ",";
+          let t3 = (celciusToFahrenheit(parseFloat(str[3]))).toString() + ",";
+          let t4 = (celciusToFahrenheit(parseFloat(str[4]))).toString() + ",";
+          let t5 = (celciusToFahrenheit(parseFloat(str[5]))).toString() + ",";
+          let t6 = (celciusToFahrenheit(parseFloat(str[6]))).toString() + ",";
+          let t7 = (celciusToFahrenheit(parseFloat(str[7]))).toString() + ",";
+          let t8 = (celciusToFahrenheit(parseFloat(str[8]))).toString() + ",";
+          outgo = d + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
+        }
+        else {
+          outgo = stdout;
+        }
+      });
+      ws_server.clients.forEach((client) => {
+        ws.send(JSON.stringify(outgo));
+    });}, sampleInterval);
+    console.log("processing go command");
+    return;
     case "R~":
       let outR = "";
       // set record state to on
@@ -223,8 +216,8 @@ function processCommand(commands, ws) {
       console.log(val);
       sampleInterval = parseFloat(commands[1]);
       interval = setInterval(() => {
-        ws_server.clients.forEach((client) => {
-          exec(READ_SCRIPT, (error, stdout, stderr) => {
+        let dOut = "";
+        exec(READ_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -240,11 +233,13 @@ function processCommand(commands, ws) {
             let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
             let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
             let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
-            ws.send(JSON.stringify(d+t1+t2+t3+t4+t5+t6+t7+t8));
+            dOut = d+t1+t2+t3+t4+t5+t6+t7+t8;
           }
           else {
-            ws.send(JSON.stringify(stdout));
+            dOut = stdout;
           }
+        ws_server.clients.forEach((client) => {
+	  ws.send(JSON.stringify(dOut));
         });
       });}, sampleInterval);
       break;
