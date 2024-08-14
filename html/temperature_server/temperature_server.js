@@ -52,9 +52,18 @@ function processCommand(commands, ws) {
 
   switch(command) {
    case "go":
+       let str = "headings,";
+       for(let i = 0; i < headerTitles.length; i++) {
+         if(i != headerTitles.length - 1) {
+           str += headerTitles[i] + ",";
+         } else {
+           str += headerTitles[i];
+         }
+       }
+       ws.send(JSON.stringify(str));
        let outgo = "";
        interval = setInterval(() => {
-         let output = exec(READ_SCRIPT, (error, stdout, stderr) => {
+         exec(READ_SCRIPT, (error, stdout, stderr) => {
           if (error) {
             console.error(`exec error: ${error}`);
             return;
@@ -207,8 +216,7 @@ function processCommand(commands, ws) {
       });}, sampleInterval);
       recordState = 0;
       console.log("processing stop command");
-      return;
-
+      break;
     case "d":
       clearInterval(interval);
       let val = parseFloat(commands[1]);
@@ -269,9 +277,8 @@ function processCommand(commands, ws) {
           ws.send(JSON.stringify(outF));
         });
       });}, sampleInterval);
-      recordState = 0;
-      console.log("processing stop command");
-      return;
+      console.log("processing scale change command");
+      break;
     case "update_headers":
       for(let i = 0; i < 8; i++) {
         headerTitles[i] = commands[i + 1];

@@ -62,11 +62,11 @@ h4 {
 }
 
 .outputDataValue {
-  font-size: 1em;
+  font-size: 1.25em;
 }
 
 .outputDataUnits {
-  font-size: 1em;
+  font-size: 1.25em;
   align-self: flex-start;
 }
 
