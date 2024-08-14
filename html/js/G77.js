@@ -17,6 +17,7 @@ var isPlotting = false;
 var currentTemperatureScale = DEGREES_C;
 var currentTemperatureSymbol = DEGREES_C_SYMBOL;
 var headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
+
 //var headerTitles = ["", "", "", "", "", "", "", ""];
 
 // **
@@ -87,19 +88,11 @@ function closeSocket() {
 //
 function processIncomingData(data) {
   dataStrings = data.split(",");
-  //console.log("data strings: " + dataStrings);
+  console.log("data strings: " + dataStrings);
   if(dataStrings[0] == "headings") {
     console.log("inside headings");
-    for(let i = 0; i < dataStrings.length; i++) {
-      document.getElementById('editable-heading'+i.toString()).innerHTML = dataStrings[i];
-      headerTitles[i] = dataStrings[i+1];
-      console.log("titles: " + headerTitles);
-//      changeHeaderText(i, dataStrings[i+1]);
-      //headerTitles[i] = dataStrings[i+1];
-      //console.log("header title: "+headerTitles[i-1]);
-    }
+    updateHeaderTitles();
   } else {
-  
 //  console.log("header titles: "+headerTitles);
     // parse out the comma separated data list to a list
     let dateStr = dataStrings[0]; // get datetime for runtime's now
@@ -113,35 +106,49 @@ function processIncomingData(data) {
   }
 }
 
+function updateHeaderTitles() {
+  document.getElementById('editable-heading1').innerHTML = headerTitles[0];
+  document.getElementById('editable-heading2').innerHTML = headerTitles[1];
+  document.getElementById('editable-heading3').innerHTML = headerTitles[2];
+  document.getElementById('editable-heading4').innerHTML = headerTitles[3];
+  document.getElementById('editable-heading5').innerHTML = headerTitles[4];
+  document.getElementById('editable-heading6').innerHTML = headerTitles[5];
+  document.getElementById('editable-heading7').innerHTML = headerTitles[6];
+  document.getElementById('editable-heading8').innerHTML = headerTitles[7];
+}
+
+
 //
 // ** Function to handle updating the header display when new data is received
 //
 function updateHeaderDisplay() {
-  let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
-  let thermo1 = parseFloat(dataStrings[1]);
-  document.getElementById('thermo1Value').innerHTML = thermo1.toFixed(1);
-  document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
-  let thermo2 = parseFloat(dataStrings[2]);
-  document.getElementById('thermo2Value').innerHTML = thermo2.toFixed(1);
-  document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
-  let thermo3 = parseFloat(dataStrings[3]);
-  document.getElementById('thermo3Value').innerHTML = thermo3.toFixed(1);
-  document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
-  let thermo4 = parseFloat(dataStrings[4]);
-  document.getElementById('thermo4Value').innerHTML = thermo4.toFixed(1);
-  document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
-  let thermo5 = parseFloat(dataStrings[5]);
-  document.getElementById('thermo5Value').innerHTML = thermo5.toFixed(1);
-  document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
-  let thermo6 = parseFloat(dataStrings[6]);
-  document.getElementById('thermo6Value').innerHTML = thermo6.toFixed(1);
-  document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
-  let thermo7 = parseFloat(dataStrings[7]);
-  document.getElementById('thermo7Value').innerHTML = thermo7.toFixed(1);
-  document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
-  let thermo8 = parseFloat(thermo8Value);
-  document.getElementById('thermo8Value').innerHTML = thermo8.toFixed(1);
-  document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
+  if(dataStrings.length > 7) {
+    let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
+    let thermo1 = parseFloat(dataStrings[1]);
+    document.getElementById('thermo1Value').innerHTML = thermo1.toFixed(1);
+    document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
+    let thermo2 = parseFloat(dataStrings[2]);
+    document.getElementById('thermo2Value').innerHTML = thermo2.toFixed(1);
+    document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
+    let thermo3 = parseFloat(dataStrings[3]);
+    document.getElementById('thermo3Value').innerHTML = thermo3.toFixed(1);
+    document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
+    let thermo4 = parseFloat(dataStrings[4]);
+    document.getElementById('thermo4Value').innerHTML = thermo4.toFixed(1);
+    document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
+    let thermo5 = parseFloat(dataStrings[5]);
+    document.getElementById('thermo5Value').innerHTML = thermo5.toFixed(1);
+    document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
+    let thermo6 = parseFloat(dataStrings[6]);
+    document.getElementById('thermo6Value').innerHTML = thermo6.toFixed(1);
+    document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
+    let thermo7 = parseFloat(dataStrings[7]);
+    document.getElementById('thermo7Value').innerHTML = thermo7.toFixed(1);
+    document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
+    let thermo8 = parseFloat(thermo8Value);
+    document.getElementById('thermo8Value').innerHTML = thermo8.toFixed(1);
+    document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
+  }
 }
 
 //
@@ -358,19 +365,12 @@ function updatePlots() {
 function changeHeaderText(index, text) {
   headerTitles[index] = text;
   // debuggin code
-  let str = "update_headers, ";
-  for(let i = 0; i < headerTitles.length; i++) {
-    if(i != headerTitles.length - 1) {
-      str += headerTitles[i] + ", ";
-    } else {
-      str += headerTitles[i];
-    }
-//    console.log("strr: " + str);
-    document.getElementById('plotTempLabel'+ (i + 1).toString()).innerHTML = headerTitles[i];
+  updateHeaderTitles();
+//  document.getElementById('plotTempLabel'+ (i + 1).toString()).innerHTML = headerTitles[i];
 //  console.log(document.getElementById('plotTempLabel' + (i+1).toString()).innt
-  }
+  
   //console.log("change header text str: " +str);
-  Socket.send(str);
+//  updateHeaderTitles();
 }
 
 //

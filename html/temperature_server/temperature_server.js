@@ -24,7 +24,7 @@ let headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 
 // define the server behavior
 ws_server.on('connection', function connection(ws) {
-
+  
   ws.on('message', function incoming(message) {
     // parse the data and send to the process method
     let strings = message.toString().split(",");
@@ -43,6 +43,18 @@ function celciusToFahrenheit(celciusTemp) {
   return celciusTemp * 9 / 5 + 32;
 }
 
+function sendHeaderTitles(ws) {
+  let str = "headings,";
+  for(let i = 0; i < headerTitles.length; i++) {
+    if(i != 7) {
+      str += headerTitles[i] + ",";
+    } else {
+     str += headerTitles[i];
+    }
+  }
+  ws.send(JSON.stringify(str));
+}
+
 //
 // ** Method to make decisions which code logic should be executed based on input commands
 //
@@ -51,11 +63,14 @@ function processCommand(commands, ws) {
   // the first index is the command
   let command = commands[0];
   let name = null;
+  //const data = commands.split(",");
+  //console.log("data: " + commands.toString());
   
   switch(command) {
    // initial command to begin sending data at a set interval
    case "go":
      clearInterval(interval);
+     sendHeaderTitles(ws);
      let outgo = "";
      interval = setInterval(() => {
        exec(READ_SCRIPT, (error, stdout, stderr) => {
@@ -99,7 +114,7 @@ function processCommand(commands, ws) {
           currentDate = new Date();
           currentFileName = commands[1];
         }
-        let output = exec(LOG_SCRIPT + currentDate.toLocaleTimeString() + "_" + commands[1], (error, stdout, stderr) => {
+        exec(LOG_SCRIPT + currentDate.toLocaleTimeString() + "_" + commands[1], (error, stdout, stderr) => {
           if(error) {
             console.error(`exec error: ${error}`);
           }
@@ -115,11 +130,9 @@ function processCommand(commands, ws) {
             let t7 = (celciusToFahrenheit(parseFloat(str[7]))).toString() + ",";
             let t8 = (celciusToFahrenheit(parseFloat(str[8]))).toString() + ",";
             outR = d + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
-//            ws.send(JSON.stringify(d+t1+t2+t3+t4+t5+t6+t7+t8));
           }
           else {
             outR = stdout;
-            //ws.send(JSON.stringify(stdout));
           }
         ws_server.clients.forEach((client) => {
           ws.send(JSON.stringify(outR));
@@ -156,10 +169,8 @@ function processCommand(commands, ws) {
             let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
             let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
             outX = d + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
-            //ws.send(JSON.stringify(d+t1+t2+t3+t4+t5+t6+t7+t8));
           }
           else {
-            //ws.send(JSON.stringify(stdout));
             outX = stdout;
           }
         });
@@ -196,11 +207,9 @@ function processCommand(commands, ws) {
             let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
             let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
             let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
-            //ws.send(JSON.stringify(d+t1+t2+t3+t4+t5+t6+t7+t8));
             outStop = d + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
           }
           else {
-            //ws.send(JSON.stringify(stdout));
             outStop = stdout;
           }
         });
@@ -213,7 +222,6 @@ function processCommand(commands, ws) {
     case "d":
       clearInterval(interval);
       let val = parseFloat(commands[1]);
-      console.log(val);
       sampleInterval = parseFloat(commands[1]);
       interval = setInterval(() => {
         let dOut = "";
@@ -278,12 +286,35 @@ function processCommand(commands, ws) {
       for(let i = 0; i < 8; i++) {
         headerTitles[i] = commands[i + 1];
       }
+      sendHeaderTitles(ws);
+      exec(READ_SCRIPT, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        if(isFahrenheit == true) {
+          let str = JSON.stringify(stdout).split(",");
+          let d = str[0] + ",";
+          let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
+          let t2 = (parseFloat(str[2]) * 9 / 5 + 32).toString()+",";
+          let t3 = (parseFloat(str[3]) * 9 / 5 + 32).toString()+",";
+          let t4 = (parseFloat(str[4]) * 9 / 5 + 32).toString()+",";
+          let t5 = (parseFloat(str[5]) * 9 / 5 + 32).toString()+",";
+          let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
+          let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
+          let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
+          outF = d+t1+t2+t3+t4+t5+t6+t7+t8;
+        }
+        else {
+          outF = stdout;
+        }
+        ws_server.clients.forEach((client) => {
+          ws.send(JSON.stringify(outF));
+        });
+      });
       console.log("header titles: " + headerTitles.toString());
       return;
-    default:
-      console.log("command not recognized: " + command.toString());
-      return;
-  }
+    }
 }
 
 function initTemperatureLog() {
