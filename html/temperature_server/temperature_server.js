@@ -65,11 +65,10 @@ function processCommand(commands, ws) {
   let name = null;
   //const data = commands.split(",");
   //console.log("data: " + commands.toString());
-  
+  clearInterval(interval);
   switch(command) {
    // initial command to begin sending data at a set interval
    case "go":
-     clearInterval(interval);
      sendHeaderTitles(ws);
      let outgo = "";
      interval = setInterval(() => {
@@ -282,10 +281,7 @@ function processCommand(commands, ws) {
       });}, sampleInterval);
       console.log("processing scale change command");
       break;
-    case "update_headers":
-      for(let i = 0; i < 8; i++) {
-        headerTitles[i] = commands[i + 1];
-      }
+    case "headings":
       sendHeaderTitles(ws);
       exec(READ_SCRIPT, (error, stdout, stderr) => {
         if (error) {
@@ -314,6 +310,36 @@ function processCommand(commands, ws) {
       });
       console.log("header titles: " + headerTitles.toString());
       return;
+    case "update_headers":
+      let updateOut = "";
+      let index = parseInt(commands[1]);
+      let text = commands[2];
+      headerTitles[index] = text;
+      exec(READ_SCRIPT, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          return;
+        }
+        if(isFahrenheit == true) {
+          let str = JSON.stringify(stdout).split(",");
+          let d = str[0] + ",";
+          let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
+          let t2 = (parseFloat(str[2]) * 9 / 5 + 32).toString()+",";
+          let t3 = (parseFloat(str[3]) * 9 / 5 + 32).toString()+",";
+          let t4 = (parseFloat(str[4]) * 9 / 5 + 32).toString()+",";
+          let t5 = (parseFloat(str[5]) * 9 / 5 + 32).toString()+",";
+          let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
+          let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
+          let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
+          updateOut = d+t1+t2+t3+t4+t5+t6+t7+t8;
+        }
+        else {
+          updateOut = stdout;
+        }
+        ws_server.clients.forEach((client) => {
+          ws.send(JSON.stringify(updateOut));
+        });
+      });    
     }
 }
 

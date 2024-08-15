@@ -27,7 +27,7 @@
           </form>
         </span>
         <div class="panel" id="thermo1Panel">
-          <h4 id="editable-heading1" tabindex="0">T1</h4>
+          <h4 id="editable-heading1"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo1Value"></span>
             <span class="outputDataUnits" id="thermo1Scale"></span>
@@ -41,6 +41,7 @@
 	      editableText1.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading1.textContent = editableText1.value;
+                  changeHeaderText(0, editableText1.value);
                   editableText1.remove();
                 }
               });
@@ -55,7 +56,7 @@
 	    });
 	</script>
         <div class="panel" id="thermo2Panel">
-          <h4 id="editable-heading2">T2</h4>
+          <h4 id="editable-heading2"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo2Value"></span>
             <span class="outputDataUnits" id="thermo2Scale"></span>
@@ -70,6 +71,7 @@
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading2.textContent = editableText.value;
+                  changeHeaderText(1, editableText.value);
                   editableText.remove();
                 }
               });
@@ -84,7 +86,7 @@
 	    });
 	</script>
         <div class="panel dropdown" id="thermo3Panel">
-          <h4 id="editable-heading3">T3</h4>
+          <h4 id="editable-heading3"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo3Value"></span>
             <span class="outputDataUnits" id="thermo3Scale"></span>
@@ -99,6 +101,7 @@
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading3.textContent = editableText.value;
+                  changeHeaderText(2, editableText.value);
                   editableText.remove();
                 }
               });
@@ -113,7 +116,7 @@
 	    });
 	</script>
         <div class="panel dropdown" id="thermo4Panel">
-          <h4 id="editable-heading4">T4</h4>
+          <h4 id="editable-heading4"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo4Value"></span>
             <span class="outputDataUnits" id="thermo4Scale"></span>
@@ -128,6 +131,7 @@
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading4.textContent = editableText.value;
+                  changeHeaderText(3, editableText.value);
                   editableText.remove();
                 }
               });
@@ -142,7 +146,7 @@
 	    });
 	</script>
         <div class="panel dropdown" id="thermo5Panel">
-          <h4 id="editable-heading5">T5</h4>
+          <h4 id="editable-heading5"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo5Value"></span>
             <span class="outputDataUnits" id="thermo5Scale"></span>
@@ -157,6 +161,7 @@
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading5.textContent = editableText.value;
+                  changeHeaderText(4, editableText.value);
                   editableText.remove();
                 }
               });
@@ -171,7 +176,7 @@
 	    });
 	</script>
         <div class="panel dropdown" id="thermo6Panel">
-          <h4 id="editable-heading6">T6</h4>
+          <h4 id="editable-heading6"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo6Value"></span>
             <span class="outputDataUnits" id="thermo6Scale"></span>
@@ -186,6 +191,7 @@
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading6.textContent = editableText.value;
+                  changeHeaderText(5, editableText.value);
                   editableText.remove();
                 }
               });
@@ -200,7 +206,7 @@
 	    });
 	</script>
         <div class="panel dropdown" id="thermo7Panel">
-          <h4 id="editable-heading7">T7</h4>
+          <h4 id="editable-heading7"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo7Value"></span>
             <span class="outputDataUnits" id="thermo7Scale"></span>
@@ -215,6 +221,7 @@
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
                   heading7.textContent = editableText.value;
+                  changeHeaderText(6, editableText.value);
                   editableText.remove();
                 }
               });
@@ -229,7 +236,7 @@
 	    });
 	</script>
         <div class="panel dropdown" id="thermo8Panel">
-          <h4 id="editable-heading8">T8</h4>
+          <h4 id="editable-heading8"></h4>
           <div class="outputData">
             <span class="outputDataValue" id="thermo8Value"></span>
             <span class="outputDataUnits" id="thermo8Scale"></span>  

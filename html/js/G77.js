@@ -16,9 +16,9 @@ var reconAttempts = 0
 var isPlotting = false;
 var currentTemperatureScale = DEGREES_C;
 var currentTemperatureSymbol = DEGREES_C_SYMBOL;
-var headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
+//var headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 
-//var headerTitles = ["", "", "", "", "", "", "", ""];
+var headerTitles = ["", "", "", "", "", "", "", ""];
 
 // **
 // ** Main entry point for setting up the client side NodeJS widgets
@@ -39,7 +39,8 @@ function openWebSocket() {
     // attempt counter reset
     reconAttempts = 0;
     writeMessage("WebSocket OPEN");
-    // indicate to the temperature server we are ready for data
+    // get the temp column names
+    Socket.send("headings");
     Socket.send("go");
   }
   // Define behavior when receiving a message over the socket
@@ -65,6 +66,7 @@ function openWebSocket() {
       openWebSocket();
     }
   }
+
   window.onbeforeunload = function(event) {
     closeSocket();
   }
@@ -88,9 +90,17 @@ function closeSocket() {
 //
 function processIncomingData(data) {
   dataStrings = data.split(",");
-  console.log("data strings: " + dataStrings);
-  if(dataStrings[0] == "headings") {
+  let initIndex = dataStrings[0].substring(1);
+  if(initIndex == 'headings') {
     console.log("inside headings");
+    for(let i = 0; i < 8; i++) {
+      console.log("string " + i.toString() + dataStrings[i+1]);
+      if(i != 7) {
+        headerTitles[i] = dataStrings[i+1];
+      } else {
+        headerTitles[i] = dataStrings[i+1].slice(0, -1);
+      }
+    }
     updateHeaderTitles();
   } else {
 //  console.log("header titles: "+headerTitles);
@@ -364,13 +374,8 @@ function updatePlots() {
 //
 function changeHeaderText(index, text) {
   headerTitles[index] = text;
-  // debuggin code
   updateHeaderTitles();
-//  document.getElementById('plotTempLabel'+ (i + 1).toString()).innerHTML = headerTitles[i];
-//  console.log(document.getElementById('plotTempLabel' + (i+1).toString()).innt
-  
-  //console.log("change header text str: " +str);
-//  updateHeaderTitles();
+  Socket.send("update_headers," + index.toString() + "," + text);
 }
 
 //
