@@ -16,9 +16,8 @@ var reconAttempts = 0
 var isPlotting = false;
 var currentTemperatureScale = DEGREES_C;
 var currentTemperatureSymbol = DEGREES_C_SYMBOL;
-//var headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
-
-var headerTitles = ["", "", "", "", "", "", "", ""];
+// array holding the current header titles to display in the UI
+var headerTitles = ["", "", "", "", "", "", "", ""]; // initially empty so temperature server can fill the array
 
 // **
 // ** Main entry point for setting up the client side NodeJS widgets
@@ -90,20 +89,20 @@ function closeSocket() {
 //
 function processIncomingData(data) {
   dataStrings = data.split(",");
+  // clean up hanging " character...
   let initIndex = dataStrings[0].substring(1);
   if(initIndex == 'headings') {
-    console.log("inside headings");
     for(let i = 0; i < 8; i++) {
-      console.log("string " + i.toString() + dataStrings[i+1]);
       if(i != 7) {
         headerTitles[i] = dataStrings[i+1];
       } else {
+        // clean up another hanging " character...
         headerTitles[i] = dataStrings[i+1].slice(0, -1);
       }
     }
     updateHeaderTitles();
   } else {
-//  console.log("header titles: "+headerTitles);
+     //clearDatasets();
     // parse out the comma separated data list to a list
     let dateStr = dataStrings[0]; // get datetime for runtime's now
     // console.log("dateStr: " + dateStr)
@@ -116,6 +115,9 @@ function processIncomingData(data) {
   }
 }
 
+//
+// ** Function to handle updating all the temperature heading labels with the current set of titles.
+//
 function updateHeaderTitles() {
   document.getElementById('editable-heading1').innerHTML = headerTitles[0];
   document.getElementById('editable-heading2').innerHTML = headerTitles[1];
@@ -262,8 +264,6 @@ function startPlots() {
     animatedZooms: true,
     ylabel: "Temperature (°C)",
     labels: ["Time", "T1", "T2", "T3", "T4","T5","T6","T7","T8"],
-    //colors: ['#FFC013','#FE664F','#028AF8'],
-    //colors: ['#F1C177','#CC2A35','#115B74'],
     colors: ['#82B528', '#9E2538', '#162C51', '#3A0D6F', '#F09A02', '#F0D702', '#F002D7', '#000000'],
     series: {
       "Time": {
