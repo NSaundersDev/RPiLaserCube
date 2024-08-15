@@ -43,6 +43,16 @@ function celciusToFahrenheit(celciusTemp) {
   return celciusTemp * 9 / 5 + 32;
 }
 
+function sendTemperatureScale(ws) {
+  let str = "f,";
+  if(isFahrenheit) {
+    str += "F";
+  } else {
+    str += "C";
+  }
+  ws.send(JSON.stringify(str));
+}
+
 function sendHeaderTitles(ws) {
   let str = "headings,";
   for(let i = 0; i < headerTitles.length; i++) {
@@ -70,6 +80,7 @@ function processCommand(commands, ws) {
    // initial command to begin sending data at a set interval
    case "go":
      sendHeaderTitles(ws);
+     sendTemperatureScale(ws);
      let outgo = "";
      interval = setInterval(() => {
        exec(READ_SCRIPT, (error, stdout, stderr) => {
@@ -312,6 +323,8 @@ function processCommand(commands, ws) {
       });
       console.log("header titles: " + headerTitles.toString());
       return;
+    case "temperature":
+      sendTemperatureScale(ws);
     case "update_headers":
       let updateOut = "";
       let index = parseInt(commands[1]);

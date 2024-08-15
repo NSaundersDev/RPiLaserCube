@@ -43,6 +43,7 @@ function openWebSocket() {
     writeMessage("WebSocket OPEN");
     // get the temp column names
     Socket.send("headings");
+    Socket.send("temperature");
     Socket.send("go");
   }
   // Define behavior when receiving a message over the socket
@@ -94,6 +95,7 @@ function processIncomingData(data) {
   dataStrings = data.split(",");
   // clean up hanging " character...
   let initIndex = dataStrings[0].substring(1);
+  let secondIndex = dataStrings[1].slice(0, -1);
   if(initIndex == 'headings') {
     for(let i = 0; i < 8; i++) {
       if(i != 7) {
@@ -104,13 +106,34 @@ function processIncomingData(data) {
       }
     }
     updateHeaderTitles();
-  } else {
-     //clearDatasets();
-    // parse out the comma separated data list to a list
+  } else if(initIndex == 'f') {
+    console.log("initIndex: " + initIndex);
+    console.log("secondIndex: " + secondIndex);
+      if(secondIndex == "F") {
+        currentTemperatureScale = DEGREES_F;
+        currentTemperatureSymbol = DEGREES_F_SYMBOL;
+        document.getElementById('degreesF').checked = true;
+        document.getElementById('degreesC').checked = false;
+      }
+      else if(secondIndex == "C") {
+        currentTemperatureScale = DEGREES_C;
+        currentTemperatureSymbol = DEGREES_C_SYMBOL;
+        document.getElementById('degreesF').checked = false;
+        document.getElementById('degreesC').checked = true;
+      }
+      updateHeaderDisplay();
+      if(document.getElementById('dynamicPlot').checked == true) {
+        updatePlots();
+      }
+      // clear the dygraph for the new temperature scale
+      clearDatasets();
+    }
+  else {
     let dateStr = dataStrings[0]; // get datetime for runtime's now
-    // console.log("dateStr: " + dateStr)
     let datetime = new Date();
+
     graphDataSet.push([datetime, parseFloat(dataStrings[1]), parseFloat(dataStrings[2]), parseFloat(dataStrings[3]), parseFloat(dataStrings[4]), parseFloat(dataStrings[5]), parseFloat(dataStrings[6]), parseFloat(dataStrings[7]), parseFloat(dataStrings[8])])
+
     if(document.getElementById('dynamicPlot').checked == true) {
       updatePlots()
     }
