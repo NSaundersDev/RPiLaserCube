@@ -1,12 +1,13 @@
+// Client-side constants
 const DEGREES_F = "degreesF";
 const DEGREES_C = "degreesC";
 const DEGREES_F_SYMBOL = "°F";
 const DEGREES_C_SYMBOL = "°C";
 
-var Socket
+var Socket // the web socket instance
 var graphDataSet = [] // stores the current set of data for the dygraph
 var dataStrings = []  // input data array for parsed event data
-var dataPlot
+var dataPlot // the dygraph object variable
 
 // state variables
 var data;
@@ -14,6 +15,8 @@ var paused = false
 var recording = 0
 var reconAttempts = 0
 var isPlotting = false;
+
+// default the temperature scale to celcius
 var currentTemperatureScale = DEGREES_C;
 var currentTemperatureSymbol = DEGREES_C_SYMBOL;
 // array holding the current header titles to display in the UI
