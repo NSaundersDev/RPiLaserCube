@@ -60,19 +60,8 @@ function openWebSocket() {
   }
   // Define behavior on socket close
   Socket.onclose = function() {
-    writeMessage("WebSocket CLOSED")
-    console.log("WebSocket CLOSED")
-    // tries to connect 3 times...
-    if (reconAttempts < 2) {
-      reconAttempts++;
-      writeMessage("Reconnecting...");
-      openWebSocket();
-    }
   }
 
-  window.onbeforeunload = function(event) {
-    closeSocket();
-  }
 }
 
 function initPlotting() {
@@ -95,7 +84,10 @@ function processIncomingData(data) {
   dataStrings = data.split(",");
   // clean up hanging " character...
   let initIndex = dataStrings[0].substring(1);
-  let secondIndex = dataStrings[1].slice(0, -1);
+  
+  if(dataStrings[1] != null && (initIndex == 'headings' || initIndex == 'f')) {
+  let secondIndex = dataStrings[1].replace('"', '');
+//  console.log("second index: " + secondIndex);
   if(initIndex == 'headings') {
     for(let i = 0; i < 8; i++) {
       if(i != 7) {
@@ -105,10 +97,11 @@ function processIncomingData(data) {
         headerTitles[i] = dataStrings[i+1].slice(0, -1);
       }
     }
+    console.log("for headings: " + secondIndex);
     updateHeaderTitles();
   } else if(initIndex == 'f') {
     console.log("initIndex: " + initIndex);
-    console.log("secondIndex: " + secondIndex);
+    console.log("secondIndex for f: " + secondIndex);
       if(secondIndex == "F") {
         currentTemperatureScale = DEGREES_F;
         currentTemperatureSymbol = DEGREES_F_SYMBOL;
@@ -128,6 +121,7 @@ function processIncomingData(data) {
       // clear the dygraph for the new temperature scale
       clearDatasets();
     }
+  }
   else {
     let dateStr = dataStrings[0]; // get datetime for runtime's now
     let datetime = new Date();
@@ -139,6 +133,7 @@ function processIncomingData(data) {
     }
     updateHeaderDisplay();
   }
+
 }
 
 //

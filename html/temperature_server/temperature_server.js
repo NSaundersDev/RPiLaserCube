@@ -9,7 +9,7 @@ const ws_server = new WebSocket.Server({ server });
 const READ_SCRIPT = '/var/www/html/temperature_server/read_all_temperatures.sh';
 const LOG_SCRIPT = 'sudo ./log_temperatures.sh ';
 const INIT_LOG_SCRIPT = 'sudo python ./init_log_temperatures.py ';
-
+const clients = new Set();
 let currentScript = READ_SCRIPT;
 let isFahrenheit = false;
 let currentDate = null;
@@ -24,7 +24,7 @@ let headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 
 // define the server behavior
 ws_server.on('connection', function connection(ws) {
-  
+  clients.add(ws);
   ws.on('message', function incoming(message) {
     // parse the data and send to the process method
     let strings = message.toString().split(",");
@@ -32,6 +32,7 @@ ws_server.on('connection', function connection(ws) {
   });
 
   ws.on('close', function close() {
+    clients.delete(ws);
     clearInterval(interval);
   });
 });
