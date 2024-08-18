@@ -42,8 +42,6 @@ function openWebSocket() {
     reconAttempts = 0;
     writeMessage("WebSocket OPEN");
     // get the temp column names
-    Socket.send("headings");
-    Socket.send("temperature");
     Socket.send("go");
   }
   // Define behavior when receiving a message over the socket

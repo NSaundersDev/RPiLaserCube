@@ -35,6 +35,7 @@ ws_server.on('connection', function connection(ws) {
   sendSamplingInterval(ws);
 
   ws.on('message', function incoming(message) {
+    clearInterval(interval);
     processCommand(message, ws);
   });
 
@@ -85,6 +86,10 @@ function sendHeaderTitles(ws) {
   ws.send(JSON.stringify(str));
 }
 
+function clearInterval(interval) {
+  interval = null;
+}
+
 //
 // ** Method to make decisions which code logic should be executed based on input commands
 //
@@ -93,7 +98,7 @@ function processCommand(message, ws) {
   // the first index is the command
   let command = commands[0];
   let name = null;
-    clearInterval(interval);
+  clearInterval(interval);
   switch(command) {
    // initial command to begin sending data at a set interval
    case "go":
@@ -125,7 +130,7 @@ function processCommand(message, ws) {
         console.log('sending to client: ' + client.id);
         ws.send(JSON.stringify(outgo));
     });}, sampleInterval);
-    console.log("processing go command");
+    console.log('Starting temperature data interval');
     return;
     case "R~":
       let outR = "";
@@ -161,11 +166,11 @@ function processCommand(message, ws) {
           else {
             outR = stdout;
           }
-        ws_server.clients.forEach((client) => {
+        clients.forEach((client) => {
           ws.send(JSON.stringify(outR));
         });
       });}, sampleInterval);
-      console.log("processing start recording command");
+      console.log('Starting recording temperature data interval');
       return;
     case "X":
       recordState = 0;
@@ -201,11 +206,11 @@ function processCommand(message, ws) {
             outX = stdout;
           }
         });
-        ws_server.clients.forEach((client) => {
+        clients.forEach((client) => {
           ws.send(JSON.stringify(outX));
       });}, sampleInterval);
 
-      console.log("processing stop recording command");
+      console.log('Stopping recording temperature data interval; starting temperature data interval.');
       return;
 
     case "stop":
@@ -214,7 +219,6 @@ function processCommand(message, ws) {
           console.error(`exec error: ${error}`);
           return;
         }
-        console.log("stopped logging temperatures.");
       });
       clearInterval(interval);
       interval = setInterval(() => {
@@ -241,7 +245,7 @@ function processCommand(message, ws) {
             outStop = stdout;
           }
         });
-        ws_server.clients.forEach((client) => {
+        clients.forEach((client) => {
           ws.send(JSON.stringify(outStop));
       });}, sampleInterval);
       recordState = 0;
@@ -274,7 +278,7 @@ function processCommand(message, ws) {
           else {
             dOut = stdout;
           }
-        ws_server.clients.forEach((client) => {
+        clients.forEach((client) => {
 	  ws.send(JSON.stringify(dOut));
         });
       });}, sampleInterval);
@@ -305,7 +309,7 @@ function processCommand(message, ws) {
           else {
             outF = stdout;
           }
-        ws_server.clients.forEach((client) => {
+        clients.forEach((client) => {
           ws.send(JSON.stringify(outF));
         });
       });}, sampleInterval);
@@ -334,7 +338,7 @@ function processCommand(message, ws) {
         else {
           outF = stdout;
         }
-        ws_server.clients.forEach((client) => {
+        clients.forEach((client) => {
           ws.send(JSON.stringify(outF));
         });
       });
@@ -370,7 +374,7 @@ function processCommand(message, ws) {
           else {
             updateOut = stdout;
           }
-        ws_server.clients.forEach((client) => {
+        clients.forEach((client) => {
           ws.send(JSON.stringify(updateOut));
         });
       });}, sampleInterval);
