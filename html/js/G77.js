@@ -46,6 +46,7 @@ function openWebSocket() {
   }
   // Define behavior when receiving a message over the socket
   Socket.onmessage = function(evt) {
+    console.log(evt.data);
     // initialize the UI plotting
     initPlotting();
     // process the socket data
@@ -82,7 +83,7 @@ function processIncomingData(data) {
   dataStrings = data.split(",");
   // clean up hanging " character...
   let initIndex = dataStrings[0].substring(1);
-  
+  console.log(dataStrings);
   if(dataStrings[1] != null && (initIndex == 'headings' || initIndex == 'f' || initIndex == "interval")) {
   let secondIndex = dataStrings[1].replace('"', '');
 //  console.log("second index: " + secondIndex);
@@ -95,11 +96,8 @@ function processIncomingData(data) {
         headerTitles[i] = dataStrings[i+1].slice(0, -1);
       }
     }
-    console.log("for headings: " + secondIndex);
     updateHeaderTitles();
   } else if(initIndex == 'f') {
-    console.log("initIndex: " + initIndex);
-    console.log("secondIndex for f: " + secondIndex);
       if(secondIndex == "F") {
         currentTemperatureScale = DEGREES_F;
         currentTemperatureSymbol = DEGREES_F_SYMBOL;
@@ -149,6 +147,16 @@ function updateHeaderTitles() {
   document.getElementById('editable-heading6').innerHTML = headerTitles[5];
   document.getElementById('editable-heading7').innerHTML = headerTitles[6];
   document.getElementById('editable-heading8').innerHTML = headerTitles[7];
+  
+  document.getElementById('plotTempLabel1').innerHTML = headerTitles[0];
+  document.getElementById('plotTempLabel2').innerHTML = headerTitles[1];
+  document.getElementById('plotTempLabel3').innerHTML = headerTitles[2];
+  document.getElementById('plotTempLabel4').innerHTML = headerTitles[3];
+  document.getElementById('plotTempLabel5').innerHTML = headerTitles[4];
+  document.getElementById('plotTempLabel6').innerHTML = headerTitles[5];
+  document.getElementById('plotTempLabel7').innerHTML = headerTitles[6];
+  document.getElementById('plotTempLabel8').innerHTML = headerTitles[7];
+
 }
 
 
@@ -416,8 +424,8 @@ function toggleTemperatureScale() {
   }
   Socket.send("f");
   // update the header with the new values
-  updateHeaderDisplay();
-  updatePlots();
+  //updateHeaderDisplay();
+  //updatePlots();
   // clear the dygraph for the new temperature scale
-  clearDatasets();
+  //clearDatasets();
 }
