@@ -3,17 +3,19 @@ const WebSocket = require('ws');
 const http = require('http');
 const { exec } = require('child_process');
 const app = express();
-const port = 8080;
 const server = http.createServer(app);
 const ws_server = new WebSocket.Server({ server });
+
 const READ_SCRIPT = '/var/www/html/temperature_server/read_all_temperatures.sh';
 const LOG_SCRIPT = 'sudo ./log_temperatures.sh ';
 const INIT_LOG_SCRIPT = 'sudo python ./init_log_temperatures.py ';
-const clients = new Set();
+
+const port = 8080;
+const clients = new Map();
+
 let currentScript = READ_SCRIPT;
 let isFahrenheit = false;
 let currentDate = null;
-
 let recordState = 0;
 let currentFileName = null;
 let sampleInterval = 1000; // default one sample per second
@@ -24,18 +26,35 @@ let headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 
 // define the server behavior
 ws_server.on('connection', function connection(ws) {
-  clients.add(ws);
+
+  console.log('Client connected');
+  clients.set(ws, { id: generateUniqueId(), name: 'Unknown' });
+
+  sendHeaderTitles(ws);
+  sendTemperatureScale(ws);
+  sendSamplingInterval(ws);
+
   ws.on('message', function incoming(message) {
-    // parse the data and send to the process method
-    let strings = message.toString().split(",");
-    processCommand(strings, ws);
+    processCommand(message, ws);
   });
 
   ws.on('close', function close() {
+    console.log('Client disconnected');
     clients.delete(ws);
-    clearInterval(interval);
   });
 });
+
+function sendSamplingInterval(ws) {
+  let str = "interval," + sampleInterval.toString();
+  ws.send(JSON.stringify(str));
+}
+
+
+function generateUniqueId() {
+    const timestamp = Date.now().toString(36); // Convert timestamp to base 36
+    const random = Math.random().toString(36).substr(2, 5); // 5 random characters
+    return `${timestamp}${random}`;
+}
 
 //
 // ** Function to convert celcius to fahrenheit
@@ -69,19 +88,15 @@ function sendHeaderTitles(ws) {
 //
 // ** Method to make decisions which code logic should be executed based on input commands
 //
-function processCommand(commands, ws) {
-
+function processCommand(message, ws) {
+  let commands = message.toString().split(",");
   // the first index is the command
   let command = commands[0];
   let name = null;
-  //const data = commands.split(",");
-  //console.log("data: " + commands.toString());
-  clearInterval(interval);
+    clearInterval(interval);
   switch(command) {
    // initial command to begin sending data at a set interval
    case "go":
-     sendHeaderTitles(ws);
-     sendTemperatureScale(ws);
      let outgo = "";
      interval = setInterval(() => {
        exec(READ_SCRIPT, (error, stdout, stderr) => {
@@ -106,7 +121,8 @@ function processCommand(commands, ws) {
           outgo = stdout;
         }
       });
-      ws_server.clients.forEach((client) => {
+      clients.forEach((client) => {
+        console.log('sending to client: ' + client.id);
         ws.send(JSON.stringify(outgo));
     });}, sampleInterval);
     console.log("processing go command");

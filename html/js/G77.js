@@ -85,7 +85,7 @@ function processIncomingData(data) {
   // clean up hanging " character...
   let initIndex = dataStrings[0].substring(1);
   
-  if(dataStrings[1] != null && (initIndex == 'headings' || initIndex == 'f')) {
+  if(dataStrings[1] != null && (initIndex == 'headings' || initIndex == 'f' || initIndex == "interval")) {
   let secondIndex = dataStrings[1].replace('"', '');
 //  console.log("second index: " + secondIndex);
   if(initIndex == 'headings') {
@@ -121,6 +121,9 @@ function processIncomingData(data) {
       // clear the dygraph for the new temperature scale
       clearDatasets();
     }
+  else if(initIndex == "interval") {
+    document.getElementById('sampleRate').value = secondIndex;
+  }
   }
   else {
     let dateStr = dataStrings[0]; // get datetime for runtime's now
