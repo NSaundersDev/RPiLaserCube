@@ -15,7 +15,7 @@ var paused = false
 var recording = 0
 var reconAttempts = 0
 var isPlotting = false;
-
+var temps = []
 // default the temperature scale to celcius
 var currentTemperatureScale = DEGREES_C;
 var currentTemperatureSymbol = DEGREES_C_SYMBOL;
@@ -46,11 +46,9 @@ function openWebSocket() {
   }
   // Define behavior when receiving a message over the socket
   Socket.onmessage = function(evt) {
-    console.log(evt.data);
-    // initialize the UI plotting
-    initPlotting();
     // process the socket data
     processIncomingData(evt.data);
+    initPlotting();
   }
   // Define behavior on socket error
   Socket.onerror = function() {
@@ -83,8 +81,7 @@ function processIncomingData(data) {
   dataStrings = data.split(",");
   // clean up hanging " character...
   let initIndex = dataStrings[0].substring(1);
-  console.log(dataStrings);
-  if(dataStrings[1] != null && (initIndex == 'headings' || initIndex == 'f' || initIndex == "interval")) {
+  if(dataStrings[1] != null && (initIndex == 'headings' || initIndex == 'isRecording' || initIndex == "interval" || initIndex == "file")) {
   let secondIndex = dataStrings[1].replace('"', '');
 //  console.log("second index: " + secondIndex);
   if(initIndex == 'headings') {
@@ -97,42 +94,59 @@ function processIncomingData(data) {
       }
     }
     updateHeaderTitles();
-  } else if(initIndex == 'f') {
-      if(secondIndex == "F") {
-        currentTemperatureScale = DEGREES_F;
-        currentTemperatureSymbol = DEGREES_F_SYMBOL;
-        document.getElementById('degreesF').checked = true;
-        document.getElementById('degreesC').checked = false;
-      }
-      else if(secondIndex == "C") {
-        currentTemperatureScale = DEGREES_C;
-        currentTemperatureSymbol = DEGREES_C_SYMBOL;
-        document.getElementById('degreesF').checked = false;
-        document.getElementById('degreesC').checked = true;
-      }
-      updateHeaderDisplay();
-      if(document.getElementById('dynamicPlot').checked == true) {
-        updatePlots();
-      }
-      // clear the dygraph for the new temperature scale
-      clearDatasets();
+    } else if(initIndex == 'isRecording') {
+        let isRecording = parseInt(dataStrings[1].slice(0, -1));
+        // console.log('is recording: ' + isRecording);
+        recording = isRecording;
+        updateRecordButton(recording);
+    } else if(initIndex == "interval") {
+      document.getElementById('sampleRate').value = secondIndex;
+    } else if(initIndex == "file") {
+      document.getElementById('csvFileName').value = secondIndex.replace('.csv','');
     }
-  else if(initIndex == "interval") {
-    document.getElementById('sampleRate').value = secondIndex;
-  }
-  }
-  else {
+  } else {
     let dateStr = dataStrings[0]; // get datetime for runtime's now
     let datetime = new Date();
-
-    graphDataSet.push([datetime, parseFloat(dataStrings[1]), parseFloat(dataStrings[2]), parseFloat(dataStrings[3]), parseFloat(dataStrings[4]), parseFloat(dataStrings[5]), parseFloat(dataStrings[6]), parseFloat(dataStrings[7]), parseFloat(dataStrings[8])])
-
-    if(document.getElementById('dynamicPlot').checked == true) {
-      updatePlots()
+    if(currentTemperatureScale == DEGREES_F) {
+      temps = getTemperaturesInFahrenheit(dataStrings);
+      graphDataSet.push(temps);
+    } else if (currentTemperatureScale == DEGREES_C) {
+      temps = getTemperaturesInCelcius(dataStrings);
+      graphDataSet.push(temps);
     }
-    updateHeaderDisplay();
+    if(graphDataSet.length > 1) {
+      updateHeaderDisplay();
+      if(document.getElementById('dynamicPlot').checked == true) {
+        updatePlots()
+      }
+    }
   }
+}
 
+function getTemperaturesInCelcius(dataStrings) {
+  let datetime = new Date();
+  let t1 = parseFloat(dataStrings[1]);
+  let t2 = parseFloat(dataStrings[2]);
+  let t3 = parseFloat(dataStrings[3]);
+  let t4 = parseFloat(dataStrings[4]);
+  let t5 = parseFloat(dataStrings[5]);
+  let t6 = parseFloat(dataStrings[6]);
+  let t7 = parseFloat(dataStrings[7]);
+  let t8 = parseFloat(dataStrings[8]);
+  return [datetime, t1, t2, t3, t4, t5, t6, t7, t8];
+}
+
+function getTemperaturesInFahrenheit(dataStrings) {
+  let datetime = new Date();
+  let t1 = parseFloat(dataStrings[1]) * 9 / 5 + 32;
+  let t2 = parseFloat(dataStrings[2]) * 9 / 5 + 32;
+  let t3 = parseFloat(dataStrings[3]) * 9 / 5 + 32;
+  let t4 = parseFloat(dataStrings[4]) * 9 / 5 + 32;
+  let t5 = parseFloat(dataStrings[5]) * 9 / 5 + 32;
+  let t6 = parseFloat(dataStrings[6]) * 9 / 5 + 32;
+  let t7 = parseFloat(dataStrings[7]) * 9 / 5 + 32;
+  let t8 = parseFloat(dataStrings[8]) * 9 / 5 + 32;
+  return [datetime, t1, t2, t3, t4, t5, t6, t7, t8];
 }
 
 //
@@ -164,35 +178,32 @@ function updateHeaderTitles() {
 // ** Function to handle updating the header display when new data is received
 //
 function updateHeaderDisplay() {
-  if(dataStrings.length > 7) {
-    let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
-    let thermo1 = parseFloat(dataStrings[1]);
-    document.getElementById('thermo1Value').innerHTML = thermo1.toFixed(1);
-    document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
-    let thermo2 = parseFloat(dataStrings[2]);
-    document.getElementById('thermo2Value').innerHTML = thermo2.toFixed(1);
-    document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
-    let thermo3 = parseFloat(dataStrings[3]);
-    document.getElementById('thermo3Value').innerHTML = thermo3.toFixed(1);
-    document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
-    let thermo4 = parseFloat(dataStrings[4]);
-    document.getElementById('thermo4Value').innerHTML = thermo4.toFixed(1);
-    document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
-    let thermo5 = parseFloat(dataStrings[5]);
-    document.getElementById('thermo5Value').innerHTML = thermo5.toFixed(1);
-    document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
-    let thermo6 = parseFloat(dataStrings[6]);
-    document.getElementById('thermo6Value').innerHTML = thermo6.toFixed(1);
-    document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
-    let thermo7 = parseFloat(dataStrings[7]);
-    document.getElementById('thermo7Value').innerHTML = thermo7.toFixed(1);
-    document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
-    let thermo8 = parseFloat(thermo8Value);
-    document.getElementById('thermo8Value').innerHTML = thermo8.toFixed(1);
-    document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
-  }
+  //let thermo8Value = dataStrings[8].substring(0,dataStrings[8].length - 1);
+  // let thermo1 = parseFloat(temps[1]);
+  document.getElementById('thermo1Value').innerHTML = temps[1].toFixed(1);
+  document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
+  let thermo2 = parseFloat(dataStrings[2]);
+  document.getElementById('thermo2Value').innerHTML = temps[2].toFixed(1);
+  document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
+  let thermo3 = parseFloat(dataStrings[3]);
+  document.getElementById('thermo3Value').innerHTML = temps[3].toFixed(1);
+  document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
+  let thermo4 = parseFloat(dataStrings[4]);
+  document.getElementById('thermo4Value').innerHTML = temps[4].toFixed(1);
+  document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
+  let thermo5 = parseFloat(dataStrings[5]);
+  document.getElementById('thermo5Value').innerHTML = temps[5].toFixed(1);
+  document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
+  let thermo6 = parseFloat(dataStrings[6]);
+  document.getElementById('thermo6Value').innerHTML = temps[6].toFixed(1);
+  document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
+  let thermo7 = parseFloat(dataStrings[7]);
+  document.getElementById('thermo7Value').innerHTML = temps[7].toFixed(1);
+  document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
+  let thermo8 = parseFloat(thermo8Value);
+  document.getElementById('thermo8Value').innerHTML = temps[8].toFixed(1);
+  document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
 }
-
 //
 // ** Function to write a message to the UI
 //
@@ -239,6 +250,7 @@ function pause() {
 // ** Handler method for toggling the record and record stop functionality from the UI
 //
 function recordStop() {
+  console.log('record stop: ' + recording);
   writeMessage("into record stop: " + recording.toString());
   if (recording) {
     writeMessage("Stopped recording");
@@ -247,6 +259,7 @@ function recordStop() {
     updateRecordButton(recording);
   }
   else {
+    clearDatasets();
     writeMessage("Began recording");
     Socket.send("R~," + document.getElementById('csvFileName').value + ".csv") // start with file name
     recording = !recording;
@@ -288,58 +301,59 @@ function updateRecordButton(recordState) {
 // ** Function to initialize the dygraph plots.
 //
 function startPlots() {
-  dataPlot = new Dygraph(document.getElementById("chartDiv"), graphDataSet, {
-    drawPoints: false,
-    legend: "always",
-    animatedZooms: true,
-    ylabel: "Temperature (°C)",
-    labels: ["Time", "T1", "T2", "T3", "T4","T5","T6","T7","T8"],
-    colors: ['#82B528', '#9E2538', '#162C51', '#3A0D6F', '#F09A02', '#F0D702', '#F002D7', '#000000'],
-    series: {
-      "Time": {
-        axis: 'x'
-      },
-      "T1": {
-        axis: 'y'
-      },
-      "T2": {
-        axis: 'y'
-      },
-      "T3": {
-        axis: 'y'
-      },
-      "T4": {
-        axis: 'y'
-      },
-      "T5": {
-        axis: 'y'
-      },
-      "T6": {
-        axis: 'y'
-      },
-      "T7": {
-        axis: 'y'
-      },
-      "T8": {
-        axis: 'y'
-      }
-    },
-    axes: {
-      x: {
-        valueFormatter: function(ms) {
-          var myDate = new Date(ms)
-          myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds()
-          return myDate.getHours() + ":" + myDate.getMinutes();
+  if(graphDataSet.length > 1) {
+    dataPlot = new Dygraph(document.getElementById("chartDiv"), graphDataSet, {
+      drawPoints: false,
+      legend: "always",
+      animatedZooms: true,
+      ylabel: "Temperature (°C)",
+      labels: ["Time", "T1", "T2", "T3", "T4","T5","T6","T7","T8"],
+      colors: ['#82B528', '#9E2538', '#162C51', '#3A0D6F', '#F09A02', '#F0D702', '#F002D7', '#000000'],
+      series: {
+        "Time": {
+          axis: 'x'
+        },
+        "T1": {
+          axis: 'y'
+        },
+        "T2": {
+          axis: 'y'
+        },
+        "T3": {
+          axis: 'y'
+        },
+        "T4": {
+          axis: 'y'
+        },
+        "T5": {
+          axis: 'y'
+        },
+        "T6": {
+          axis: 'y'
+        },
+        "T7": {
+          axis: 'y'
+        },
+        "T8": {
+          axis: 'y'
         }
       },
-      y: {
-        drawGrid: true,
-        independentTicks: true,
-        includeZero: true
-      },
-    }
-  });
-
+      axes: {
+        x: {
+          valueFormatter: function(ms) {
+            var myDate = new Date(ms)
+            myDate.getHours() + ":" + myDate.getMinutes() + ":" + myDate.getSeconds()
+            return myDate.getHours() + ":" + myDate.getMinutes();
+          }
+        },
+        y: {
+          drawGrid: true,
+          independentTicks: true,
+          includeZero: true
+        },
+      }
+    });
+  }
 }
 
 //
@@ -375,37 +389,33 @@ function sampleRate() {
 // ** and plots it to the dygraph UI.
 //
 function updatePlots() {
-  if (document.getElementById('dynamicPlot').checked == true) {
-    var startDataIndex = 0;
-    var lastDataIndex = graphDataSet.length - 1;
-    var historySize = document.getElementById('historySize').value
-    if (historySize > 2400) {
-      document.getElementById('historySize').value = 2400
-      historySize = 2400
+  if(dataPlot != null) {
+    if (document.getElementById('dynamicPlot').checked == true) {
+      var startDataIndex = 0;
+      var lastDataIndex = graphDataSet.length - 1;
+      var historySize = document.getElementById('historySize').value
+      if (historySize > 2400) {
+        document.getElementById('historySize').value = 2400
+        historySize = 2400
+      }
+      if (lastDataIndex > historySize) {
+        startDataIndex = lastDataIndex - historySize
+      }
+      if(graphDataSet.length > 0) {
+        dataPlot.updateOptions({
+          'file': graphDataSet,
+          dateWindow: [graphDataSet[startDataIndex][0], graphDataSet[lastDataIndex][0]]
+        });
+      }
+    } else {
+      dataPlot.updateOptions({
+        'file': graphDataSet,
+        dateWindow: ""
+      });
     }
-    if (lastDataIndex > historySize) {
-      startDataIndex = lastDataIndex - historySize
-    }
-    dataPlot.updateOptions({
-      'file': graphDataSet,
-      dateWindow: [graphDataSet[startDataIndex][0], graphDataSet[lastDataIndex][0]]
-    });
   } else {
-    dataPlot.updateOptions({
-      'file': graphDataSet,
-      dateWindow: ""
-    });
+    startPlots();
   }
-}
-
-//
-// ** Function to change the header text values in the UI. The index tells which text to update,
-// ** and the text is the new text to set as the value.
-//
-function changeHeaderText(index, text) {
-  headerTitles[index] = text;
-  updateHeaderTitles();
-  Socket.send("update_headers," + index.toString() + "," + text);
 }
 
 //
@@ -422,10 +432,9 @@ function toggleTemperatureScale() {
     currentTemperatureScale = DEGREES_C;
     currentTemperatureSymbol = DEGREES_C_SYMBOL;
   }
-  Socket.send("f");
-  // update the header with the new values
-  //updateHeaderDisplay();
-  //updatePlots();
   // clear the dygraph for the new temperature scale
-  //clearDatasets();
+  clearDatasets();
+  // update the header with the new values
+  updateHeaderDisplay();
+  updatePlots();
 }

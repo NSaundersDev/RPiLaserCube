@@ -11,10 +11,9 @@ const LOG_SCRIPT = 'sudo ./log_temperatures.sh ';
 const INIT_LOG_SCRIPT = 'sudo python ./init_log_temperatures.py ';
 
 const port = 8080;
-const clients = new Map();
+const clients = new Set();
 
 let currentScript = READ_SCRIPT;
-let isFahrenheit = false;
 let currentDate = null;
 let recordState = 0;
 let currentFileName = null;
@@ -28,53 +27,38 @@ let headerTitles = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
 ws_server.on('connection', function connection(ws) {
 
   console.log('Client connected');
-  clients.set(ws, { id: generateUniqueId(), name: 'Unknown' });
+  clients.add(ws);
+  //clients.set(ws, { id: generateUniqueId(), name: 'Unknown' });
   sendHeaderTitles(ws);
-  sendTemperatureScale(ws);
+  sendRecordingState(ws);
   sendSamplingInterval(ws);
-
+  if(currentFileName != null) {
+    sendFileName(ws);
+  }
   ws.on('message', function incoming(message) {
-    interval = null;
     processCommand(message, ws);
   });
 
-  ws.on('close', function close() {
+  ws.on('close', function close() { 
     console.log('Client disconnected');
-    interval = null;
     clients.delete(ws);
   });
 });
+
+function sendFileName(ws) {
+  let str = "file," + currentFileName;
+  ws.send(JSON.stringify(str));
+}
 
 function sendSamplingInterval(ws) {
   let str = "interval," + sampleInterval.toString();
   ws.send(JSON.stringify(str));
 }
 
-
 function generateUniqueId() {
     const timestamp = Date.now().toString(36); // Convert timestamp to base 36
     const random = Math.random().toString(36).substr(2, 5); // 5 random characters
     return `${timestamp}${random}`;
-}
-
-//
-// ** Function to convert celcius to fahrenheit
-//
-function celciusToFahrenheit(celciusTemp) {
-  return celciusTemp * 9 / 5 + 32;
-}
-
-function sendTemperatureScale(ws) {
-  let str = 'f,';
-  if(isFahrenheit) {
-    str += 'F';
-  } else {
-    str += 'C';
-  }
-  clients.forEach((client) => {
-    console.log('sending ' + str + " to " + client.id);
-    ws.send(JSON.stringify(str));
-  });
 }
 
 function sendHeaderTitles(ws) {
@@ -89,9 +73,14 @@ function sendHeaderTitles(ws) {
   ws.send(JSON.stringify(str));
 }
 
+function sendRecordingState(ws) {
+  let str = "isRecording," + recordState.toString();
+  ws.send(JSON.stringify(str));
+}
+
 
 function startInterval(ws, script) {
-  interval = null;
+  clearInterval(interval);
   let out = "";
   interval = setInterval(() => {
     exec(script, (error, stdout, stderr) => {
@@ -99,25 +88,10 @@ function startInterval(ws, script) {
         console.error(`exec error: ${error}`);
         return;
       }
-      if(isFahrenheit == true) {
-        let str = JSON.stringify(stdout).split(",");
-        let d = str[0] + ",";
-        let t1 = (celciusToFahrenheit(parseFloat(str[1]))).toString() + ",";
-        let t2 = (celciusToFahrenheit(parseFloat(str[2]))).toString() + ",";
-        let t3 = (celciusToFahrenheit(parseFloat(str[3]))).toString() + ",";
-        let t4 = (celciusToFahrenheit(parseFloat(str[4]))).toString() + ",";
-        let t5 = (celciusToFahrenheit(parseFloat(str[5]))).toString() + ",";
-        let t6 = (celciusToFahrenheit(parseFloat(str[6]))).toString() + ",";
-        let t7 = (celciusToFahrenheit(parseFloat(str[7]))).toString() + ",";
-        let t8 = (celciusToFahrenheit(parseFloat(str[8]))).toString() + ",";
-        out = d + t1 + t2 + t3 + t4 + t5 + t6 + t7 + t8;
-      }
-      else {
-        out = stdout;
-      }
+      out = stdout;
     });
   clients.forEach((client) => {
-    ws.send(JSON.stringify(out));
+    client.send(JSON.stringify(out));
   });}, sampleInterval);
 }
 
@@ -173,80 +147,16 @@ function processCommand(message, ws) {
       recordState = 0;
       console.log("processing stop command");
       break;
-    case "d":
+    case "d":  /// change sampling interval
       let val = parseFloat(commands[1]);
       sampleInterval = parseFloat(commands[1]);
       startInterval(ws, READ_SCRIPT);
       break;
-    case "f":
-      isFahrenheit = !isFahrenheit;
-      console.log("before send temp scale...");
-      sendTemperatureScale(ws);
-      startInterval(ws, READ_SCRIPT);
-      console.log("processing scale change command");
-      break;
-    case "headings":
+    case "headings": // change the headings
       sendHeaderTitles(ws);
-      exec(READ_SCRIPT, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          return;
-        }
-        if(isFahrenheit == true) {
-          let str = JSON.stringify(stdout).split(",");
-          let d = str[0] + ",";
-          let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
-          let t2 = (parseFloat(str[2]) * 9 / 5 + 32).toString()+",";
-          let t3 = (parseFloat(str[3]) * 9 / 5 + 32).toString()+",";
-          let t4 = (parseFloat(str[4]) * 9 / 5 + 32).toString()+",";
-          let t5 = (parseFloat(str[5]) * 9 / 5 + 32).toString()+",";
-          let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
-          let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
-          let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
-          outF = d+t1+t2+t3+t4+t5+t6+t7+t8;
-        }
-        else {
-          outF = stdout;
-        }
-        clients.forEach((client) => {
-          ws.send(JSON.stringify(outF));
-        });
-      });
+      startInterval(ws, READ_SCRIPT);
       console.log("header titles: " + headerTitles.toString());
       return;
-    case "temperature":
-      sendTemperatureScale(ws);
-    case "update_headers":
-      let updateOut = "";
-      let index = parseInt(commands[1]);
-      let text = commands[2];
-      headerTitles[index] = text;
-      interval = setInterval(() => {
-        exec(READ_SCRIPT, (error, stdout, stderr) => {
-          if (error) {
-            console.error(`exec error: ${error}`);
-            return;
-          }
-          if(isFahrenheit == true) {
-            let str = JSON.stringify(stdout).split(",");
-            let d = str[0] + ",";
-            let t1 = (parseFloat(str[1]) * 9 / 5 + 32).toString()+",";
-            let t2 = (parseFloat(str[2]) * 9 / 5 + 32).toString()+",";
-            let t3 = (parseFloat(str[3]) * 9 / 5 + 32).toString()+",";
-            let t4 = (parseFloat(str[4]) * 9 / 5 + 32).toString()+",";
-            let t5 = (parseFloat(str[5]) * 9 / 5 + 32).toString()+",";
-            let t6 = (parseFloat(str[6]) * 9 / 5 + 32).toString()+",";
-            let t7 = (parseFloat(str[7]) * 9 / 5 + 32).toString()+",";
-            let t8 = (parseFloat(str[8]) * 9 / 5 + 32).toString()+",";
-            updateOut = d+t1+t2+t3+t4+t5+t6+t7+t8;
-          }
-          else {
-            updateOut = stdout;
-          }
-        clients.forEach((client) => {
-          ws.send(JSON.stringify(updateOut));
-        });
-      });}, sampleInterval);
     }
 }
 
