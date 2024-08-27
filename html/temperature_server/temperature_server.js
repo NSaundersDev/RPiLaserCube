@@ -55,12 +55,6 @@ function sendSamplingInterval(ws) {
   ws.send(JSON.stringify(str));
 }
 
-function generateUniqueId() {
-    const timestamp = Date.now().toString(36); // Convert timestamp to base 36
-    const random = Math.random().toString(36).substr(2, 5); // 5 random characters
-    return `${timestamp}${random}`;
-}
-
 function sendHeaderTitles(ws) {
   let str = "headings,";
   for(let i = 0; i < headerTitles.length; i++) {
@@ -90,9 +84,10 @@ function startInterval(ws, script) {
       }
       out = stdout;
     });
-  clients.forEach((client) => {
-    client.send(JSON.stringify(out));
-  });}, sampleInterval);
+    clients.forEach((client) => {
+      client.send(JSON.stringify(out));
+    });
+  }, sampleInterval);
 }
 
 //
@@ -111,31 +106,33 @@ function processCommand(message, ws) {
     return;
 
     case "R~":
-      let outR = "";
       // set record state to on
-      recordState = 1;
-      if(currentDate == null) {
-        currentDate = new Date();
-        currentFileName = commands[1];
+      if(recordState == 0) {
+        recordState = 1;
+        if(currentDate == null) {
+          currentDate = new Date();
+          currentFileName = commands[1];
+        }
+        initTemperatureLog();
+        startInterval(ws, LOG_SCRIPT + currentDate.toLocaleTimeString() + "_" + commands[1]);
+        console.log('Starting recording temperature data interval');
       }
-      initTemperatureLog();
-      startInterval(ws, LOG_SCRIPT + currentDate.toLocaleTimeString() + "_" + commands[1]);
-      console.log('Starting recording temperature data interval');
       return;
     case "X":
-      recordState = 0;
-      exec("./stop_logging_temperatures.sh " + currentDate.toLocaleTimeString() + "_" + currentFileName, (error, stdout, stderr) => {
-        if(error) {
-          console.error(`exec error: ${error}`);
-          return;
-        }
-      });
-      currentFileName = null;
-      currentDate = null;
-      startInterval(ws, READ_SCRIPT);
-      console.log('Stopping recording temperature data interval; starting temperature data interval.');
+      if(recordState == 1) {
+        recordState = 0;
+        exec("./stop_logging_temperatures.sh " + currentDate.toLocaleTimeString() + "_" + currentFileName, (error, stdout, stderr) => {
+          if(error) {
+            console.error(`exec error: ${error}`);
+            return;
+          }
+        });
+        currentFileName = null;
+        currentDate = null;
+        startInterval(ws, READ_SCRIPT);
+        console.log('Stopping recording temperature data interval; starting temperature data interval.');
+      }
       return;
-
     case "stop":
       exec("./stop_logging_temperatures.sh", (error, stdout, stderr) => {
         if (error) {
@@ -146,12 +143,12 @@ function processCommand(message, ws) {
       startInterval(ws, READ_SCRIPT);
       recordState = 0;
       console.log("processing stop command");
-      break;
+      return;
     case "d":  /// change sampling interval
       let val = parseFloat(commands[1]);
       sampleInterval = parseFloat(commands[1]);
       startInterval(ws, READ_SCRIPT);
-      break;
+      return;
     case "headings": // change the headings
       sendHeaderTitles(ws);
       startInterval(ws, READ_SCRIPT);

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">  
   <link rel="stylesheet" type="text/css" src="css/dygraph.css" />
   <link rel="stylesheet" type="text/css" href="css/thermoSquidClient.css">
-  <title>Endlas ThermoSquid</title>
+  <title>* ThermoSquid *</title>
   <script type="text/javascript" src="js/dygraph.min.js"></script>
   <script type="text/javascript" src="js/thermoSquidClient.js"></script>    
 </head>
@@ -40,15 +40,19 @@
 	      editableText1.value = heading1.textContent;
 	      editableText1.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading1.textContent = editableText1.value;
-                  changeHeaderText(0, editableText1.value);
-                  editableText1.remove();
+                  if(editableText1.textContent) {
+                    heading1.textContent = editableText1.value;
+                    changeHeaderText(0, editableText1.value);
+	            editableText1.remove();
+                  }
                 }
               });
 	      editableText1.addEventListener('blur', function() {
-	        heading1.textContent = editableText1.value;
-                changeHeaderText(0, editableText1.value);
-	        editableText1.remove();
+                if(editableText1.value) {
+                  heading1.textContent = editableText1.value;
+                  changeHeaderText(0, editableText1.value);
+	          editableText1.remove();
+                }
 	      });
 	      heading1.textContent = '';
 	      heading1.appendChild(editableText1);

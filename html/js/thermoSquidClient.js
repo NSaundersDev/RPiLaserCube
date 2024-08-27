@@ -112,10 +112,14 @@ function processRecordingData(dataStrings) {
 function processHeadingTitleData(datStrings) {
   for(let i = 0; i < 8; i++) {
     if(i != 7) {
-     headerTitles[i] = dataStrings[i+1];
+     if(dataStrings[i+1] != "") {
+       headerTitles[i] = dataStrings[i+1];
+     }
     } else {
       // clean up another hanging " character...
-      headerTitles[i] = dataStrings[i+1].slice(0, -1);
+      if(dataStrings[i+1].slice(0, -1) != "") {
+        headerTitles[i] = dataStrings[i+1].slice(0, -1);
+      }
     }
   }
   updateHeaderTitles();
@@ -432,6 +436,12 @@ function updatePlots() {
   } else {
     startPlots();
   }
+}
+
+function changeHeaderText(index, text) {
+  headerTitles[index] = text;
+  updateHeaderTitles();
+  Socket.send("update_headers," + index.toString() + "," + text);
 }
 
 //
