@@ -1,4 +1,5 @@
 // Client-side constants
+const SERVER_IP = "ws://192.168.1.9:8080";
 const DEGREES_F = "degreesF";
 const DEGREES_C = "degreesC";
 const DEGREES_F_SYMBOL = "°F";
@@ -16,9 +17,11 @@ var recording = 0
 var reconAttempts = 0
 var isPlotting = false;
 var temps = []
+
 // default the temperature scale to celcius
 var currentTemperatureScale = DEGREES_C;
 var currentTemperatureSymbol = DEGREES_C_SYMBOL;
+
 // array holding the current header titles to display in the UI
 var headerTitles = ["", "", "", "", "", "", "", ""]; // initially empty so temperature server can fill the array
 
@@ -35,7 +38,7 @@ function startup() {
 //
 function openWebSocket() {
   // Define websocket for data communiction
-  Socket = new WebSocket("ws://192.168.1.9:8080");
+  Socket = new WebSocket(SERVER_IP);
   // Define behavior on socket open
   Socket.onopen = function() {
     // attempt counter reset
@@ -81,44 +84,57 @@ function processIncomingData(data) {
   dataStrings = data.split(",");
   // clean up hanging " character...
   let initIndex = dataStrings[0].substring(1);
+  // check initIndex for specific commands: headings, recording, interval, and file
   if(dataStrings[1] != null && (initIndex == 'headings' || initIndex == 'isRecording' || initIndex == "interval" || initIndex == "file")) {
-  let secondIndex = dataStrings[1].replace('"', '');
-//  console.log("second index: " + secondIndex);
-  if(initIndex == 'headings') {
-    for(let i = 0; i < 8; i++) {
-      if(i != 7) {
-        headerTitles[i] = dataStrings[i+1];
-      } else {
-        // clean up another hanging " character...
-        headerTitles[i] = dataStrings[i+1].slice(0, -1);
-      }
-    }
-    updateHeaderTitles();
-    } else if(initIndex == 'isRecording') {
-        let isRecording = parseInt(dataStrings[1].slice(0, -1));
-        // console.log('is recording: ' + isRecording);
-        recording = isRecording;
-        updateRecordButton(recording);
-    } else if(initIndex == "interval") {
+
+    let secondIndex = dataStrings[1].replace('"', '');
+
+    if(initIndex == 'headings') {  // heading title update
+      processHeadingTitleData(dataStrings);
+    } else if(initIndex == 'isRecording') {  // set the recording state according to the server
+      processRecordingData(dataStrings);
+    } else if(initIndex == "interval") {  // set the sample rate according to the server
       document.getElementById('sampleRate').value = secondIndex;
-    } else if(initIndex == "file") {
+    } else if(initIndex == "file") {  // set the file name in the input form according to the server
       document.getElementById('csvFileName').value = secondIndex.replace('.csv','');
     }
-  } else {
-    let dateStr = dataStrings[0]; // get datetime for runtime's now
-    let datetime = new Date();
-    if(currentTemperatureScale == DEGREES_F) {
-      temps = getTemperaturesInFahrenheit(dataStrings);
-      graphDataSet.push(temps);
-    } else if (currentTemperatureScale == DEGREES_C) {
-      temps = getTemperaturesInCelcius(dataStrings);
-      graphDataSet.push(temps);
+  } else {  // temperature data
+    processTemperatureData(dataStrings);
+  }
+}
+
+function processRecordingData(dataStrings) {
+  let isRecording = parseInt(dataStrings[1].slice(0, -1));
+  recording = isRecording;
+  updateRecordButton(recording);
+}
+
+function processHeadingTitleData(datStrings) {
+  for(let i = 0; i < 8; i++) {
+    if(i != 7) {
+     headerTitles[i] = dataStrings[i+1];
+    } else {
+      // clean up another hanging " character...
+      headerTitles[i] = dataStrings[i+1].slice(0, -1);
     }
-    if(graphDataSet.length > 1) {
-      updateHeaderDisplay();
-      if(document.getElementById('dynamicPlot').checked == true) {
-        updatePlots()
-      }
+  }
+  updateHeaderTitles();
+}
+
+function processTemperatureData(dataStrings) {
+  let dateStr = dataStrings[0]; // get datetime for runtime's now
+  let datetime = new Date();
+  if(currentTemperatureScale == DEGREES_F) {
+    temps = getTemperaturesInFahrenheit(dataStrings);
+    graphDataSet.push(temps);
+  } else if (currentTemperatureScale == DEGREES_C) {
+    temps = getTemperaturesInCelcius(dataStrings);
+    graphDataSet.push(temps);
+  }
+  if(graphDataSet.length > 1) {
+    updateHeaderDisplay();
+    if(document.getElementById('dynamicPlot').checked == true) {
+      updatePlots()
     }
   }
 }
