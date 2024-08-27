@@ -1,5 +1,5 @@
 // Client-side constants
-const SERVER_IP = "ws://192.168.1.9:8080";
+const URL_SOCKET = "ws://192.168.1.9:8080";
 const DEGREES_F = "degreesF";
 const DEGREES_C = "degreesC";
 const DEGREES_F_SYMBOL = "°F";
@@ -38,7 +38,7 @@ function startup() {
 //
 function openWebSocket() {
   // Define websocket for data communiction
-  Socket = new WebSocket(SERVER_IP);
+  Socket = new WebSocket(URL_SOCKET);
   // Define behavior on socket open
   Socket.onopen = function() {
     // attempt counter reset
