@@ -151,9 +151,14 @@ function processCommand(message, ws) {
       return;
     case "headings": // change the headings
       sendHeaderTitles(ws);
-      startInterval(ws, READ_SCRIPT);
+      // startInterval(ws, READ_SCRIPT);
       console.log("header titles: " + headerTitles.toString());
       return;
+    case "update_headers":
+      let index = parseInt(commands[1]);
+      headerTitles[index] = commands[2];
+      console.log("updated header titles: " + headerTitles);
+  //Socket.send("update_headers," + index.toString() + "," + text);      
     }
 }
 

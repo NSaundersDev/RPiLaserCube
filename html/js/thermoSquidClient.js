@@ -441,6 +441,7 @@ function updatePlots() {
 function changeHeaderText(index, text) {
   headerTitles[index] = text;
   updateHeaderTitles();
+  console.log("sending titles: " + headerTitles);
   Socket.send("update_headers," + index.toString() + "," + text);
 }
 
