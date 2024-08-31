@@ -4,7 +4,7 @@
   <meta charset="UTF-8">  
   <link rel="stylesheet" type="text/css" src="css/dygraph.css" />
   <link rel="stylesheet" type="text/css" href="css/thermoSquidClient.css">
-  <title>* ThermoSquid *</title>
+  <title>* Endlas ThermoSquid *</title>
   <script type="text/javascript" src="js/dygraph.min.js"></script>
   <script type="text/javascript" src="js/thermoSquidClient.js"></script>    
 </head>
@@ -15,7 +15,7 @@
     <header>
       <div class="logos">
         <a href="http://endlas.com/">
-          <img src="img/endlasLogo.png" alt="Endlas Additive" style="max-width:16em;max-height:12em;width:auto;height:auto;margin-left:0.5em;" />
+          <img src="img/thermoSquid2.png" alt="Endlas Additive" style="max-width:12em;max-height:7.5em;width:auto;height:auto;margin-left:0.5em;" />
         </a>
       </div>
       <div class="AllDataContainer">
@@ -36,7 +36,7 @@
 	  <script>
 	    const heading1 = document.getElementById('editable-heading1');
 	    heading1.addEventListener('click', function() {
-	      const editableText1 = document.createElement('input');
+	      const editableText2 = document.createElement('input');
 	      editableText1.value = heading1.textContent;
 	      editableText1.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
@@ -67,26 +67,30 @@
           </div>
         </div>
 	  <script>
-	    const heading2 = document.getElementById('editable-heading2');
+
+            const heading2 = document.getElementById('editable-heading2');
 	    heading2.addEventListener('click', function() {
-	      const editableText = document.createElement('input');
-	      editableText.value = heading2.textContent;
-              heading2.focus();
-	      editableText.addEventListener('keydown', function(event) {
+	      const editableText2 = document.createElement('input');
+	      editableText2.value = heading2.textContent;
+	      editableText2.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading2.textContent = editableText.value;
-                  changeHeaderText(1, editableText.value);
-                  editableText.remove();
+                  if(editableText2.value) {
+                    heading2.textContent = editableText2.value;
+                    changeHeaderText(0, editableText2.value);
+	            editableText2.remove();
+                  }
                 }
               });
-	      editableText.addEventListener('blur', function() {
-	        heading2.textContent = editableText.value;
-                changeHeaderText(1, editableText.value);
-	        editableText.remove();
+	      editableText2.addEventListener('blur', function() {
+                if(editableText2.value) {
+                  heading2.textContent = editableText2.value;
+                  changeHeaderText(0, editableText2.value);
+	          editableText2.remove();
+                }
 	      });
 	      heading2.textContent = '';
-	      heading2.appendChild(editableText);
-              editableText.focus();
+	      heading2.appendChild(editableText2);
+              editableText2.focus();
 	    });
 	</script>
         <div class="panel dropdown" id="thermo3Panel">
@@ -272,7 +276,7 @@
       </div>
     </header>
     <div class="controlBar">
-      <label style="margin-left:1em;">File name:</label>
+      <label style="margin-left:1em;color:white;">File name:</label>
       <input type="text" id="csvFileName" onmouseover="writeMessage('Base File Name- Date and extension will be added.')" onmouseout="writeMessage('')" style="margin-left:0.25em;">
       <input id="recordStopBtnElem" class="controlBtn" type="image" src="img/RecordNormal.png" onclick="recordStop();" onmouseover="this.src='img/RecordPressed.png'; writeMessage('START Recording Data to Base File Name');" onmouseout="this.src='img/RecordNormal.png'; writeMessage('');"/>
       <input id="pauseBtnElem" class="controlBtn" type="image" src="img/PauseNormal.png" onclick="pause();" onmouseover="this.src='img/PausePressed.png'; writeMessage('PAUSE Measurements')" onmouseout="this.src='img/PauseNormal.png'; writeMessage('')" />

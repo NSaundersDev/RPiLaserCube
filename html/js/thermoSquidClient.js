@@ -463,5 +463,4 @@ function toggleTemperatureScale() {
   clearDatasets();
   // update the header with the new values
   updateHeaderDisplay();
-  updatePlots();
 }
