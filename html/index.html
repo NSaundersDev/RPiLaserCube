@@ -14,9 +14,7 @@
   <body>
     <header>
       <div class="logos">
-        <a href="http://endlas.com/">
-          <img src="img/thermoSquid2.png" alt="Endlas Additive" style="max-width:12em;max-height:7.5em;width:auto;height:auto;margin-left:0.5em;" />
-        </a>
+        <img src="img/thermoSquid2.png" alt="Endlas Additive" style="max-width:12em;max-height:7.5em;width:auto;height:auto;margin-left:0.5em;" />
       </div>
       <div class="AllDataContainer">
         <span style="margin-right:0.25em;">
@@ -36,27 +34,27 @@
 	  <script>
 	    const heading1 = document.getElementById('editable-heading1');
 	    heading1.addEventListener('click', function() {
-	      const editableText2 = document.createElement('input');
+	      const editableText1 = document.createElement('input');
 	      editableText1.value = heading1.textContent;
 	      editableText1.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  if(editableText1.textContent) {
-                    heading1.textContent = editableText1.value;
-                    changeHeaderText(0, editableText1.value);
+            if(editableText1.value) {
+              heading1.textContent = editableText1.value;
+              changeHeaderText(0, editableText1.value);
 	            editableText1.remove();
-                  }
-                }
-              });
+            }
+          }
+        });
 	      editableText1.addEventListener('blur', function() {
-                if(editableText1.value) {
-                  heading1.textContent = editableText1.value;
-                  changeHeaderText(0, editableText1.value);
+          if(editableText1.value) {
+            heading1.textContent = editableText1.value;
+            changeHeaderText(0, editableText1.value);
 	          editableText1.remove();
-                }
+          }
 	      });
 	      heading1.textContent = '';
 	      heading1.appendChild(editableText1);
-              editableText1.focus();
+        editableText1.focus();
 	    });
 	</script>
         <div class="panel" id="thermo2Panel">
@@ -68,25 +66,25 @@
         </div>
 	  <script>
 
-            const heading2 = document.getElementById('editable-heading2');
+      const heading2 = document.getElementById('editable-heading2');
 	    heading2.addEventListener('click', function() {
 	      const editableText2 = document.createElement('input');
 	      editableText2.value = heading2.textContent;
 	      editableText2.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  if(editableText2.value) {
-                    heading2.textContent = editableText2.value;
-                    changeHeaderText(0, editableText2.value);
+            if(editableText2.value) {
+              heading2.textContent = editableText2.value;
+              changeHeaderText(1, editableText2.value);
 	            editableText2.remove();
-                  }
-                }
-              });
+            }
+          }
+        });
 	      editableText2.addEventListener('blur', function() {
-                if(editableText2.value) {
-                  heading2.textContent = editableText2.value;
-                  changeHeaderText(0, editableText2.value);
+          if(editableText2.value) {
+            heading2.textContent = editableText2.value;
+            changeHeaderText(1, editableText2.value);
 	          editableText2.remove();
-                }
+          }
 	      });
 	      heading2.textContent = '';
 	      heading2.appendChild(editableText2);
@@ -108,19 +106,23 @@
               heading3.focus();
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading3.textContent = editableText.value;
-                  changeHeaderText(2, editableText.value);
-                  editableText.remove();
-                }
-              });
+            if(editableText.value) {
+              heading3.textContent = editableText.value;
+              changeHeaderText(2, editableText.value);
+	            editableText.remove();
+            }             
+          }
+        });
 	      editableText.addEventListener('blur', function() {
-	        heading3.textContent = editableText.value;
-                changeHeaderText(2, editableText.value);
-	        editableText.remove();
+          if(editableText.value) {
+            heading3.textContent = editableText.value;
+            changeHeaderText(2, editableText.value);
+	          editableText.remove();
+          }
 	      });
 	      heading3.textContent = '';
 	      heading3.appendChild(editableText);
-              editableText.focus();
+        editableText.focus();
 	    });
 	</script>
         <div class="panel dropdown" id="thermo4Panel">
@@ -138,19 +140,23 @@
               heading4.focus();
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading4.textContent = editableText.value;
-                  changeHeaderText(3, editableText.value);
-                  editableText.remove();
-                }
-              });
+            if(editableText.value) {
+              heading4.textContent = editableText.value;
+              changeHeaderText(3, editableText.value);
+              editableText.remove();
+            }    
+          }
+        });
 	      editableText.addEventListener('blur', function() {
-	        heading4.textContent = editableText.value;
-                changeHeaderText(3, editableText.value);
-	        editableText.remove();
+          if(editableText.value) {
+            heading4.textContent = editableText.value;
+            changeHeaderText(3, editableText.value);
+	          editableText.remove();
+          }
 	      });
 	      heading4.textContent = '';
 	      heading4.appendChild(editableText);
-              editableText.focus();
+        editableText.focus();
 	    });
 	</script>
         <div class="panel dropdown" id="thermo5Panel">
@@ -165,22 +171,25 @@
 	    heading5.addEventListener('click', function() {
 	      const editableText = document.createElement('input');
 	      editableText.value = heading5.textContent;     
-              heading5.focus();
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading5.textContent = editableText.value;
-                  changeHeaderText(4, editableText.value);
-                  editableText.remove();
-                }
-              });
+            if(editableText.value) {
+              heading5.textContent = editableText.value;
+              changeHeaderText(4, editableText.value);
+              editableText.remove();
+            }
+          }
+        });
 	      editableText.addEventListener('blur', function() {
-	        heading5.textContent = editableText.value;
-                changeHeaderText(4, editableText.value);
-	        editableText.remove();
+          if(editableText.value) {
+            heading5.textContent = editableText.value;
+            changeHeaderText(4, editableText.value);
+	          editableText.remove();
+          }
 	      });
 	      heading5.textContent = '';
 	      heading5.appendChild(editableText);
-              editableText.focus();
+        editableText.focus();
 	    });
 	</script>
         <div class="panel dropdown" id="thermo6Panel">
@@ -195,22 +204,25 @@
 	    heading6.addEventListener('click', function() {
 	      const editableText = document.createElement('input');
 	      editableText.value = heading6.textContent;
-              heading6.focus();
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading6.textContent = editableText.value;
-                  changeHeaderText(5, editableText.value);
-                  editableText.remove();
-                }
-              });
+            if(editableText.value) {
+              heading6.textContent = editableText.value;
+              changeHeaderText(5, editableText.value);
+              editableText.remove();
+            }        
+          }
+        });
 	      editableText.addEventListener('blur', function() {
-	        heading6.textContent = editableText.value;
-                changeHeaderText(5, editableText.value);
-	        editableText.remove();
+          if(editableText.value) {
+            heading6.textContent = editableText.value;
+            changeHeaderText(5, editableText.value);
+	          editableText.remove();
+          }  
 	      });
 	      heading6.textContent = '';
 	      heading6.appendChild(editableText);
-              editableText.focus();
+        editableText.focus();
 	    });
 	</script>
         <div class="panel dropdown" id="thermo7Panel">
@@ -225,22 +237,25 @@
 	    heading7.addEventListener('click', function() {
 	      const editableText = document.createElement('input');
 	      editableText.value = heading7.textContent;
-              heading7.focus();
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading7.textContent = editableText.value;
-                  changeHeaderText(6, editableText.value);
-                  editableText.remove();
-                }
-              });
+            if(editableText.value) {
+              heading7.textContent = editableText.value;
+              changeHeaderText(6, editableText.value);
+              editableText.remove();
+            }        
+          }
+        });
 	      editableText.addEventListener('blur', function() {
-	        heading7.textContent = editableText.value;
-                changeHeaderText(6, editableText.value);
-	        editableText.remove();
+          if(editableText.value) {
+            heading7.textContent = editableText.value;
+            changeHeaderText(6, editableText.value);
+	          editableText.remove();
+          }
 	      });
 	      heading7.textContent = '';
 	      heading7.appendChild(editableText);
-              editableText.focus();
+        editableText.focus();
 	    });
 	</script>
         <div class="panel dropdown" id="thermo8Panel">
@@ -254,22 +269,25 @@
 	    heading8.addEventListener('click', function() {
 	      const editableText = document.createElement('input');
 	      editableText.value = heading8.textContent;
-              heading8.focus();
 	      editableText.addEventListener('keydown', function(event) {
 	        if (event.key === 'Enter') {
-                  heading8.textContent = editableText.value;
-                  changeHeaderText(7, editableText.value);
-                  editableText.remove();
-                }
-              });
+            if(editableText.value) {
+              heading8.textContent = editableText.value;
+              changeHeaderText(7, editableText.value);
+              editableText.remove();
+            }        
+          }
+        });
 	      editableText.addEventListener('blur', function() {
-	        heading8.textContent = editableText.value;
-                changeHeaderText(7, editableText.value);
-	        editableText.remove();
+          if(editableText.value) {
+            heading8.textContent = editableText.value;
+            changeHeaderText(7, editableText.value);
+	          editableText.remove();
+          }
 	      });
 	      heading8.textContent = '';
 	      heading8.appendChild(editableText);
-              editableText.focus();
+        editableText.focus();
 	    });
 	</script>	       
         </div>
