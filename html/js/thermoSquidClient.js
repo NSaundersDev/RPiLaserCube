@@ -190,7 +190,27 @@ function updateHeaderTitles() {
   document.getElementById('plotTempLabel6').innerHTML = headerTitles[5];
   document.getElementById('plotTempLabel7').innerHTML = headerTitles[6];
   document.getElementById('plotTempLabel8').innerHTML = headerTitles[7];
+}
 
+function clearHeaderTemperatures() {
+  document.getElementById('thermo1Value').innerHTML = "--";
+  document.getElementById('thermo2Value').innerHTML = "--";
+  document.getElementById('thermo3Value').innerHTML = "--";
+  document.getElementById('thermo4Value').innerHTML = "--";
+  document.getElementById('thermo5Value').innerHTML = "--";
+  document.getElementById('thermo6Value').innerHTML = "--";
+  document.getElementById('thermo7Value').innerHTML = "--";
+  document.getElementById('thermo8Value').innerHTML = "--";
+
+  document.getElementById('thermo1Scale').innerHTML = currentTemperatureSymbol;
+  document.getElementById('thermo2Scale').innerHTML = currentTemperatureSymbol;
+  document.getElementById('thermo3Scale').innerHTML = currentTemperatureSymbol;
+  document.getElementById('thermo4Scale').innerHTML = currentTemperatureSymbol;
+  document.getElementById('thermo5Scale').innerHTML = currentTemperatureSymbol;
+  document.getElementById('thermo6Scale').innerHTML = currentTemperatureSymbol;
+  document.getElementById('thermo7Scale').innerHTML = currentTemperatureSymbol;
+  document.getElementById('thermo8Scale').innerHTML = currentTemperatureSymbol;
+  
 }
 
 
@@ -461,6 +481,6 @@ function toggleTemperatureScale() {
   }
   // clear the dygraph for the new temperature scale
   clearDatasets();
-  // update the header with the new values
-  updateHeaderDisplay();
+  document.getElementById('thermo1Value').value = null;
+  clearHeaderTemperatures();
 }
