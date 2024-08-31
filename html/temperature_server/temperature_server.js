@@ -6,9 +6,9 @@ const app = express();
 const server = http.createServer(app);
 const ws_server = new WebSocket.Server({ server });
 
-const READ_SCRIPT = '/var/www/html/temperature_server/read_all_temperatures.sh';
-const LOG_SCRIPT = 'sudo ./log_temperatures.sh ';
-const INIT_LOG_SCRIPT = 'sudo python ./init_log_temperatures.py ';
+const READ_SCRIPT = './var/www/html/temperature_server/read_all_temperatures.sh';
+const LOG_SCRIPT = 'cd /var/www/html/temperature_server && sudo ./log_temperatures.sh ';
+const INIT_LOG_SCRIPT = 'cd /var/www/html/temperature_server && sudo python ./var/www/html/temperature_server/init_log_temperatures.py ';
 
 const port = 8080;
 const clients = new Set();
@@ -121,7 +121,7 @@ function processCommand(message, ws) {
     case "X":
       if(recordState == 1) {
         recordState = 0;
-        exec("./stop_logging_temperatures.sh " + currentDate.toLocaleTimeString() + "_" + currentFileName, (error, stdout, stderr) => {
+        exec("cd /var/www/html/temperature_server && sudo ./stop_logging_temperatures.sh " + currentDate.toLocaleTimeString() + "_" + currentFileName, (error, stdout, stderr) => {
           if(error) {
             console.error(`exec error: ${error}`);
             return;
@@ -134,7 +134,7 @@ function processCommand(message, ws) {
       }
       return;
     case "stop":
-      exec("./stop_logging_temperatures.sh", (error, stdout, stderr) => {
+      exec("cd /var/www/html/temperature_server && sudo ./stop_logging_temperatures.sh", (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
           return;
