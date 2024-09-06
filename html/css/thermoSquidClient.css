@@ -6,7 +6,7 @@ body {
 
 header {
   display: flex;
-  background: linear-gradient(to right, white, #403c3c);
+  background: linear-gradient(to right, white, darkred);
   margin: 0px 0px 5px 0px;
   border-radius: 5px;
   justify-content: space-between;
@@ -128,7 +128,7 @@ h4 {
 .controlBar {
   display: flex;
   /*background: rgb(200, 200, 200);*/
-  background: linear-gradient(to left, white, #403c3c);
+  background: linear-gradient(to left, red, darkred);
   /*! margin: 0px; */
   border-radius: 5px;
   justify-content: flex-start;

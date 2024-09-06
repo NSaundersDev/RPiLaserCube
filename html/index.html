@@ -298,8 +298,8 @@
       <input type="text" id="csvFileName" onmouseover="writeMessage('Base File Name- Date and extension will be added.')" onmouseout="writeMessage('')" style="margin-left:0.25em;">
       <input id="recordStopBtnElem" class="controlBtn" type="image" src="img/RecordNormal.png" onclick="recordStop();" onmouseover="this.src='img/RecordPressed.png'; writeMessage('START Recording Data to Base File Name');" onmouseout="this.src='img/RecordNormal.png'; writeMessage('');"/>
       <input id="pauseBtnElem" class="controlBtn" type="image" src="img/PauseNormal.png" onclick="pause();" onmouseover="this.src='img/PausePressed.png'; writeMessage('PAUSE Measurements')" onmouseout="this.src='img/PauseNormal.png'; writeMessage('')" />
-      <a href="http://192.168.1.9/data/" id="downloadBtnElem" class="controlBtn"><img src="img/downloadNormal.png" onmouseover="this.src='img/downloadPressed2.png'; writeMessage('Download a Data Set')" onmouseout="this.src='img/downloadNormal.png'; writeMessage('')"alt="Download a dataSet"></a>
-      <div id="message"></div>
+      <a href="http://192.168.0.77/data/" id="downloadBtnElem" class="controlBtn"><img src="img/downloadNormal.png" onmouseover="this.src='img/downloadPressed2.png'; writeMessage('Download a Data Set')" onmouseout="this.src='img/downloadNormal.png'; writeMessage('')"alt="Download a dataSet"></a>
+      <div id="message" style="color:white;"></div>
       <div id="settingsElem" class="settingsDropdown">
         <span style="">
           <input type="text" id="sampleRate" value="1000" onmouseover="writeMessage('Sample Interval (ms)')" onmouseout="writeMessage('')">
@@ -356,7 +356,7 @@
       <div class="graphControls">
         <input id="dynamicPlot" checked="true" type="checkbox" onmouseover="writeMessage('Keep up with the Latest Data')" onmouseout="writeMessage('')">
         <label for="dynamicPlot" onmouseover="writeMessage('Keep up with the Latest Data')" onmouseout="writeMessage('')">Live Plot </label>
-        <input type="text" id="historySize" value="600" onmouseover="writeMessage('Max Number of Latest samples to Plot')" onmouseout="writeMessage('')">
+        <input type="text" id="historySize" value="2400" onmouseover="writeMessage('Max Number of Latest samples to Plot')" onmouseout="writeMessage('')">
         <label for="historySize" onmouseover="writeMessage('Max Number of Latest samples to Plot')" onmouseout="writeMessage('')">Samples on graph</label>
       </div>
       <input id="resetChartDataBtn" class="controlBtn" type="image" src="img/cleanup.png" onclick="clearDatasets();" onmouseover="writeMessage('Clear Chart Data')" onmouseout="writeMessage('')" />

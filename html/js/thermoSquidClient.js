@@ -1,5 +1,5 @@
 // Client-side constants
-const URL_SOCKET = "ws://192.168.1.9:8080";
+const URL_SOCKET = "ws://192.168.0.77:8080";
 const DEGREES_F = "degreesF";
 const DEGREES_C = "degreesC";
 const DEGREES_F_SYMBOL = "°F";
@@ -96,7 +96,7 @@ function processIncomingData(data) {
     } else if(initIndex == "interval") {  // set the sample rate according to the server
       document.getElementById('sampleRate').value = secondIndex;
     } else if(initIndex == "file") {  // set the file name in the input form according to the server
-      document.getElementById('csvFileName').value = secondIndex.replace('.csv','');
+      document.getElementById('csvFileName').value = secondIndex.replace('.csv','').replace(/ /g, '_');
     }
   } else {  // temperature data
     processTemperatureData(dataStrings);
@@ -113,12 +113,12 @@ function processHeadingTitleData(datStrings) {
   for(let i = 0; i < 8; i++) {
     if(i != 7) {
      if(dataStrings[i+1] != "") {
-       headerTitles[i] = dataStrings[i+1];
+       headerTitles[i] = dataStrings[i+1].replace(/ /g, '_');
      }
     } else {
       // clean up another hanging " character...
       if(dataStrings[i+1].slice(0, -1) != "") {
-        headerTitles[i] = dataStrings[i+1].slice(0, -1);
+        headerTitles[i] = dataStrings[i+1].slice(0, -1).replace(/ /g, '_');
       }
     }
   }
@@ -301,7 +301,7 @@ function recordStop() {
   else {
     clearDatasets();
     writeMessage("Began recording");
-    Socket.send("R~," + document.getElementById('csvFileName').value + ".csv") // start with file name
+    Socket.send("R~," + document.getElementById('csvFileName').value.replace(/ /g, '_') + ".csv") // start with file name
     recording = !recording;
     updateRecordButton(recording);
   }
@@ -348,7 +348,7 @@ function startPlots() {
       animatedZooms: true,
       ylabel: "Temperature (°C)",
       labels: ["Time", "T1", "T2", "T3", "T4","T5","T6","T7","T8"],
-      colors: ['#82B528', '#9E2538', '#162C51', '#3A0D6F', '#F09A02', '#F0D702', '#F002D7', '#000000'],
+      colors: ['#000000', '#9E2538', '#162C51', '#3A0D6F', '#F09A02', '#F0D702', '#F002D7', '#82B528'],
       series: {
         "Time": {
           axis: 'x'
@@ -438,6 +438,11 @@ function updatePlots() {
         document.getElementById('historySize').value = 2400
         historySize = 2400
       }
+      else if(historySize < 100) {
+        document.getElementById('historySize').value = 2400;
+        historySize = 2400;
+      }
+
       if (lastDataIndex > historySize) {
         startDataIndex = lastDataIndex - historySize
       }
@@ -459,10 +464,10 @@ function updatePlots() {
 }
 
 function changeHeaderText(index, text) {
-  headerTitles[index] = text;
+  headerTitles[index] = text.replace(/ /g, '_');
   updateHeaderTitles();
   console.log("sending titles: " + headerTitles);
-  Socket.send("update_headers," + index.toString() + "," + text);
+  Socket.send("update_headers," + index.toString() + "," + text.replace(/ /g, '_'));
 }
 
 //

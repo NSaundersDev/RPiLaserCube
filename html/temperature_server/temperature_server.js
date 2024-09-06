@@ -8,7 +8,7 @@ const ws_server = new WebSocket.Server({ server });
 
 const READ_SCRIPT = './var/www/html/temperature_server/read_all_temperatures.sh';
 const LOG_SCRIPT = 'cd /var/www/html/temperature_server && sudo ./log_temperatures.sh ';
-const INIT_LOG_SCRIPT = 'cd /var/www/html/temperature_server && sudo python ./var/www/html/temperature_server/init_log_temperatures.py ';
+const INIT_LOG_SCRIPT = 'cd /var/www/html/temperature_server && sudo python /var/www/html/temperature_server/init_log_temperatures.py ';
 
 const port = 8080;
 const clients = new Set();
