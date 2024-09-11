@@ -1,5 +1,5 @@
 [Unit]
-Description=Automatic startup for wifipi
+Description=Automatic startup for thermoSquid
 
 [Service]
 ExecStart=sudo hostapd /etc/hostapd/hostapd.conf
