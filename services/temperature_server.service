@@ -1,0 +1,9 @@
+[Unit]
+Description=Start the temperature server for the apache application
+After=network.target
+
+[Service]
+ExecStart=sudo node /var/www/html/temperature_server/temperature_server.js
+
+[Install]
+WantedBy=default.target

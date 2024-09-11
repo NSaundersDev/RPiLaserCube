@@ -1,0 +1,9 @@
+[Unit]
+After=network.target
+
+[Service]
+ExecStart=python /home/pi/SmartFan-rpi/python/examples/loop.py -t 30 -v
+
+[Install]
+WantedBy=default.target
+

@@ -1,0 +1,8 @@
+[Unit]
+Description=Automatic startup for wifipi
+
+[Service]
+ExecStart=sudo hostapd /etc/hostapd/hostapd.conf
+
+[Install]
+WantedBy=default.target
